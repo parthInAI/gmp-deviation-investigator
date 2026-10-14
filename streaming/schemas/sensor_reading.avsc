@@ -1,0 +1,321 @@
+{
+  "type": "record",
+  "name": "SensorReading",
+  "namespace": "ie.gmpdi.process",
+  "doc": "One IndPenSim process sample from a 100,000 L penicillin fermenter. Contract for topic process.sensor.v1.",
+  "fields": [
+    {
+      "name": "batch_id",
+      "type": "int",
+      "doc": "Batch number in the IndPenSim campaign (1-100; 91-100 contain faults)."
+    },
+    {
+      "name": "seq",
+      "type": "int",
+      "doc": "1-based row number within the batch; (batch_id, seq) is the natural key."
+    },
+    {
+      "name": "time_h",
+      "type": "double",
+      "doc": "Hours since batch start (IndPenSim samples every 0.2 h)."
+    },
+    {
+      "name": "event_time",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Simulated plant clock: 2023-01-01 + (batch_id-1)*240 h + time_h."
+    },
+    {
+      "name": "fault_ref",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "Simulator fault flag per sample; 0 = normal. Ground truth for evaluation only, never a model input."
+    },
+    {
+      "name": "fault_flag",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "Per-batch fault label from the dataset (1 for batches 91-100). Ground truth only."
+    },
+    {
+      "name": "control_ref",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "0 = recipe driven, 1 = operator controlled."
+    },
+    {
+      "name": "pat_ref",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "1 = no Raman spectrum, 2 = Raman recorded and used for PAT control (batches 61-90)."
+    },
+    {
+      "name": "batch_ref",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "IndPenSim batch reference column, passed through unchanged."
+    },
+    {
+      "name": "aeration_rate_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "agitator_rpm",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "sugar_feed_rate_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "acid_flow_rate_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "base_flow_rate_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "cooling_water_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "heating_water_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "water_injection_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "air_head_pressure_bar",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "dumped_broth_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "substrate_conc_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "dissolved_oxygen_mgpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "penicillin_conc_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "vessel_volume_l",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "vessel_weight_kg",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "ph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "temperature_k",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "generated_heat_kj",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "offgas_co2_pct",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "paa_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "paa_offline_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "oil_flow_lph",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "nh3_offline_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "oxygen_uptake_rate",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "offgas_o2_pct",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "penicillin_offline_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "biomass_offline_gpl",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "carbon_evolution_rate",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "ammonia_shots_kg",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "viscosity_offline_cp",
+      "type": [
+        "null",
+        "double"
+      ],
+      "default": null
+    },
+    {
+      "name": "replay_id",
+      "type": "string",
+      "doc": "Identifies the replay run that produced this event."
+    }
+  ]
+}

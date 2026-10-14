@@ -1,0 +1,25 @@
+# data and generated output (the IndPenSim CSV is ~2.5 GB; never commit it)
+data/
+out/
+spark-warehouse/
+metastore_db/
+*.log
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# env and editors
+.env
+.idea/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store

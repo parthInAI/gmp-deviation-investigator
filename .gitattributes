@@ -1,0 +1,4 @@
+# Keep LF everywhere so files mounted into Linux containers work from Windows.
+* text=auto eol=lf
+*.png binary
+*.pdf binary

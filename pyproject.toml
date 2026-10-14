@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmp-deviation-investigator"
+version = "0.1.0"
+description = "Agentic deviation-investigation assistant for biopharma manufacturing, on a streaming lakehouse (simulated IndPenSim data)."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Parth Pandya" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "confluent-kafka[avro,schemaregistry]>=2.6",
+  "fastavro>=1.9",
+  "requests>=2.32",
+]
+
+[project.optional-dependencies]
+lakehouse = ["deltalake>=1.0", "pyarrow>=17"]
+spark = ["pyspark==4.0.1"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+include = ["streaming*", "lakehouse*"]
+
+[tool.setuptools.package-data]
+streaming = ["schemas/*.avsc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["spark: needs pyspark and a Java runtime"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["lakehouse/databricks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

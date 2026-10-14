@@ -1,0 +1,32 @@
+{
+  "type": "record",
+  "name": "RecallEvent",
+  "namespace": "ie.gmpdi.quality",
+  "doc": "One openFDA drug enforcement (recall) report. Contract for topic quality.fda_recall.v1. Source: https://api.fda.gov/drug/enforcement.json",
+  "fields": [
+    {"name": "recall_number", "type": "string", "doc": "FDA recall number; natural key and Kafka message key."},
+    {"name": "event_id", "type": ["null", "string"], "default": null},
+    {"name": "status", "type": ["null", "string"], "default": null},
+    {"name": "classification", "type": ["null", "string"], "default": null, "doc": "Class I, II or III."},
+    {"name": "product_type", "type": ["null", "string"], "default": null},
+    {"name": "product_description", "type": ["null", "string"], "default": null},
+    {"name": "product_quantity", "type": ["null", "string"], "default": null},
+    {"name": "code_info", "type": ["null", "string"], "default": null},
+    {"name": "reason_for_recall", "type": ["null", "string"], "default": null},
+    {"name": "recalling_firm", "type": ["null", "string"], "default": null},
+    {"name": "city", "type": ["null", "string"], "default": null},
+    {"name": "state", "type": ["null", "string"], "default": null},
+    {"name": "country", "type": ["null", "string"], "default": null},
+    {"name": "distribution_pattern", "type": ["null", "string"], "default": null},
+    {"name": "voluntary_mandated", "type": ["null", "string"], "default": null},
+    {"name": "initial_firm_notification", "type": ["null", "string"], "default": null},
+    {"name": "recall_initiation_date", "type": ["null", "string"], "default": null, "doc": "YYYYMMDD as published by openFDA."},
+    {"name": "center_classification_date", "type": ["null", "string"], "default": null},
+    {"name": "report_date", "type": ["null", "string"], "default": null, "doc": "YYYYMMDD; used as the incremental watermark."},
+    {"name": "termination_date", "type": ["null", "string"], "default": null},
+    {"name": "openfda_brand_name", "type": {"type": "array", "items": "string"}, "default": []},
+    {"name": "openfda_generic_name", "type": {"type": "array", "items": "string"}, "default": []},
+    {"name": "openfda_manufacturer_name", "type": {"type": "array", "items": "string"}, "default": []},
+    {"name": "ingested_at", "type": {"type": "long", "logicalType": "timestamp-millis"}, "doc": "When the producer fetched this record."}
+  ]
+}

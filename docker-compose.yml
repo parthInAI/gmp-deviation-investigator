@@ -1,0 +1,128 @@
+# Phase 1 stack: Redpanda (Kafka API + schema registry), Console, and two
+# one-shot tool containers (app = Python producers/gate, spark = bronze job).
+#
+#   docker compose up -d --wait            # broker, registry, console (http://localhost:8080)
+#   docker compose run --rm app python -m streaming.registry register
+#   docker compose run --rm app python -m streaming.replayer --csv data/raw/<file>.csv
+#   docker compose run --rm spark          # Kafka -> bronze Delta (availableNow)
+#   docker compose run --rm app python -m lakehouse.gate_check
+
+name: gmpdi
+
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:${REDPANDA_VERSION:-v25.3.11}
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container   # single node, relaxed fsync: laptop settings, not production
+      - --smp 1
+      - --memory 1G
+      - --default-log-level=warn
+    ports:
+      - "19092:19092"  # Kafka API for clients on your machine
+      - "18081:18081"  # Schema registry
+      - "18082:18082"  # HTTP proxy
+      - "19644:9644"   # Admin API
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  console:
+    image: docker.redpanda.com/redpandadata/console:${CONSOLE_VERSION:-v3.12.0}
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml; /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:9092"]
+        schemaRegistry:
+          enabled: true
+          urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  app:
+    build: .
+    image: gmpdi-app:dev
+    profiles: ["tools"]
+    working_dir: /app
+    environment:
+      KAFKA_BOOTSTRAP: redpanda:9092
+      SCHEMA_REGISTRY_URL: http://redpanda:8081
+      OPENFDA_API_KEY: ${OPENFDA_API_KEY:-}
+      PYTHONPATH: /app
+    volumes:
+      - ./streaming:/app/streaming:ro
+      - ./lakehouse:/app/lakehouse:ro
+      - ./tests/fixtures:/app/tests/fixtures:ro
+      - ${RAW_DATA_DIR:-./data/raw}:/app/data/raw:ro
+      - ./out:/app/out
+      - lakehouse:/lakehouse
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  fetch-data:  # one-off: download, verify and unzip IndPenSim into RAW_DATA_DIR
+    image: gmpdi-app:dev
+    profiles: ["tools"]
+    working_dir: /app
+    environment:
+      PYTHONPATH: /app
+    volumes:
+      - ./streaming:/app/streaming:ro
+      - ${RAW_DATA_DIR:-./data/raw}:/data
+    command: ["python", "-m", "streaming.fetch_data", "--dest", "/data"]
+
+  spark:
+    image: apache/spark:${SPARK_IMAGE_TAG:-4.0.4-java21-python3}
+    profiles: ["tools"]
+    user: root  # the named volumes are root-owned; fine for a local dev box
+    working_dir: /opt/app
+    entrypoint:
+      - /opt/spark/bin/spark-submit
+      - --driver-memory
+      - ${SPARK_DRIVER_MEMORY:-2g}
+      - --conf
+      - spark.jars.ivy=/ivy
+      - --conf
+      - spark.log.level=WARN
+      - --packages
+      - org.apache.spark:spark-sql-kafka-0-10_2.13:${SPARK_VERSION:-4.0.4},org.apache.spark:spark-avro_2.13:${SPARK_VERSION:-4.0.4},io.delta:delta-spark_2.13:${DELTA_VERSION:-4.0.1}
+      - /opt/app/lakehouse/bronze.py
+    command: ["--topic", "all"]
+    environment:
+      KAFKA_BOOTSTRAP: redpanda:9092
+      LAKEHOUSE_DIR: /lakehouse
+    volumes:
+      - ./lakehouse:/opt/app/lakehouse:ro
+      - ./streaming/schemas:/opt/app/streaming/schemas:ro
+      - lakehouse:/lakehouse
+      - ivy-cache:/ivy   # jars download once, then are reused
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+volumes:
+  redpanda-data:
+  lakehouse:     # Delta tables live here, not in your (OneDrive-synced) project folder
+  ivy-cache:

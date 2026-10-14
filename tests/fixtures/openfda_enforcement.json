@@ -1,0 +1,54 @@
+{
+  "_comment": "Hand-made fixture in the openFDA drug/enforcement response shape. Firms and products are fictional.",
+  "meta": {"results": {"skip": 0, "limit": 1000, "total": 4}},
+  "results": [
+    {
+      "recall_number": "D-0101-2026",
+      "event_id": "90001",
+      "status": "Ongoing",
+      "classification": "Class II",
+      "product_type": "Drugs",
+      "product_description": "Examplicillin Injection, 1 g vial",
+      "product_quantity": "12,400 vials",
+      "code_info": "Lot EX2401, EX2402",
+      "reason_for_recall": "CGMP Deviations: out-of-specification results for fermentation titre not adequately investigated.",
+      "recalling_firm": "Fictional Biologics Ltd",
+      "city": "Cork",
+      "state": "",
+      "country": "Ireland",
+      "distribution_pattern": "Nationwide in the USA",
+      "voluntary_mandated": "Voluntary: Firm initiated",
+      "initial_firm_notification": "Letter",
+      "recall_initiation_date": "20260112",
+      "center_classification_date": "20260203",
+      "report_date": "20260211",
+      "openfda": {"brand_name": ["EXAMPLICILLIN"], "generic_name": ["EXAMPLICILLIN SODIUM"], "manufacturer_name": ["Fictional Biologics Ltd"]}
+    },
+    {
+      "recall_number": "D-0102-2026",
+      "event_id": "90002",
+      "status": "Terminated",
+      "classification": "Class III",
+      "product_type": "Drugs",
+      "product_description": "Sampleprazole Tablets 20 mg",
+      "reason_for_recall": "Failed Dissolution Specifications",
+      "recalling_firm": "Imaginary Pharma Inc",
+      "country": "United States",
+      "report_date": "20260218",
+      "termination_date": "20260601"
+    },
+    {
+      "event_id": "90003",
+      "status": "Ongoing",
+      "reason_for_recall": "Record without a recall number; the producer must skip it."
+    },
+    {
+      "recall_number": "D-0101-2026",
+      "event_id": "90001",
+      "status": "Ongoing",
+      "classification": "Class II",
+      "reason_for_recall": "Duplicate of the first record in the same page.",
+      "report_date": "20260211"
+    }
+  ]
+}

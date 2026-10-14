@@ -1,0 +1,55 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4  # for the pyspark unit tests
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: pip install -e ".[lakehouse,spark,dev]"
+      - run: ruff check .
+      - run: pytest -q
+
+  # The Phase 1 gate, end to end, on synthetic IndPenSim-shaped data:
+  # Redpanda + schema registry -> replayer -> Spark Structured Streaming -> bronze Delta -> gate check.
+  phase1-gate:
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Generate 100 synthetic batches
+        run: python -m streaming.sample_data --out data/raw/sample_indpensim.csv --batches 100 --rows 40
+      - name: Start Redpanda
+        run: docker compose up -d --wait redpanda
+      - name: Register Avro contracts
+        run: docker compose run --rm app python -m streaming.registry register
+      - name: Replay all batches
+        run: docker compose run --rm app python -m streaming.replayer --csv data/raw/sample_indpensim.csv
+      - name: Produce recall fixture
+        run: docker compose run --rm app python -m streaming.openfda_producer --fixture tests/fixtures/openfda_enforcement.json
+      - name: Kafka -> bronze Delta (Spark)
+        run: docker compose run --rm spark
+      - name: Gate check
+        run: docker compose run --rm app python -m lakehouse.gate_check --lakehouse /lakehouse
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-gate
+          path: out/
+      - if: failure()
+        run: docker compose logs redpanda
