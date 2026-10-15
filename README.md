@@ -10,7 +10,7 @@ It watches a simulated 100,000 L penicillin fermentation (IndPenSim) in near rea
 
 | Phase | Weeks | Gate | State |
 |---|---|---|---|
-| 1. Data foundation | 1–2 | All 100 batches replay into bronze | **Passed** on the real data ([results](docs/phase1/RESULTS.md)) |
+| 1. Data foundation | 1–2 | All 100 batches replay into bronze | **Passed** on the real data, locally and on Databricks ([results](docs/phase1/RESULTS.md)) |
 | 2. Lakehouse and orchestration | 3–4 | Injected schema changes are caught | Not started |
 | 3. Detection model | 5–6 | Faults caught on held-out batches | Not started |
 | 4. Agent team | 7–8 | Cited draft for all 10 fault batches | Not started |

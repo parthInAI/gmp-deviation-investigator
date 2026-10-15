@@ -16,6 +16,10 @@ Stack: Redpanda v25.3.11 (Kafka API and schema registry), Spark 4.0.4 Structured
 
 **Reproduced on a Windows laptop** (Docker Desktop, WSL2), run from the VS Code task "Phase 1 gate on REAL IndPenSim data": 100/100 batches, 113,935/113,935 readings, 0 duplicates, 0 decode failures, faults 91–100. The replay ran at 776 events/s, or 113,935 in 147 s, slower than on Linux because the 2.5 GB CSV is read through the Windows bind mount.
 
+**Reproduced on Databricks Free Edition** (15 Oct 2026): the same 113,935 readings as NDJSON in a Unity Catalog Volume, ingested by Auto Loader (`lakehouse/databricks/bronze_autoloader.py`) into `workspace.gmpdi.bronze_process_sensor`. Gate query result: 100 batches, 113,935 readings, 0 duplicate rows, 0 rows with rescued (off-contract) data, fault batches 91–100. The 877 live openFDA recalls landed in `workspace.gmpdi.bronze_fda_recall`.
+
+![Databricks gate query](databricks_gate.png)
+
 ## Measured numbers (2 vCPU, so treat these as a floor)
 
 - **Replay, end to end at max speed:** 3,014 events/s, which is 113,935 readings in 37.8 s. This includes parsing the 2.5 GB CSV, about 18 s of the total.
