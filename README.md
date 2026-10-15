@@ -1,5 +1,11 @@
 # GMP Deviation Investigator
 
+[![ci](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml/badge.svg)](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml)
+![Phase 1](https://img.shields.io/badge/phase_1-gate_passed-2ea043)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
+
+**Phase 1 results:** 100/100 batches and 113,935/113,935 readings in bronze, locally and on Databricks. [See the evidence →](docs/phase1/RESULTS.md)
+
 An agentic deviation-investigation assistant for biopharma manufacturing, built on a streaming lakehouse and designed against the **draft** EU GMP Annex 22 rules for AI.
 
 It watches a simulated 100,000 L penicillin fermentation (IndPenSim) in near real time, flags abnormal batches with a static, versioned anomaly model, and hands them to a team of AI agents that draft a cited investigation report. A named QA reviewer approves or rejects every draft, and every step is audited. The LLMs only draft: they never detect, decide or act on the process.
