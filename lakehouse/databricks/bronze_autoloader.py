@@ -26,7 +26,11 @@ volume = dbutils.widgets.get("volume")
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog}.{schema}")
 spark.sql(f"CREATE VOLUME IF NOT EXISTS {catalog}.{schema}.{volume}")
 base = f"/Volumes/{catalog}/{schema}/{volume}"
-print("Upload NDJSON to:", base + "/process_sensor/  and  " + base + "/fda_recall/")
+for folder in ("process_sensor", "fda_recall"):
+    dbutils.fs.mkdirs(f"{base}/{folder}")
+print("Ready. Upload the NDJSON files to:")
+print(" ", base + "/process_sensor/   (batch_001.jsonl ... batch_100.jsonl)")
+print(" ", base + "/fda_recall/       (recalls_*.jsonl)")
 
 # COMMAND ----------
 
@@ -56,8 +60,7 @@ def ingest(folder: str, schema_file: str, table: str):
     stream = (
         spark.readStream.format("cloudFiles")
         .option("cloudFiles.format", "json")
-        .option("cloudFiles.schemaEvolutionMode", "rescue")  # unexpected fields -> _rescued_data
-        .option("rescuedDataColumn", "_rescued_data")
+        .option("rescuedDataColumn", "_rescued_data")  # fields that don't fit the contract land here
         .schema(ddl)
         .load(f"{base}/{folder}")
     )
