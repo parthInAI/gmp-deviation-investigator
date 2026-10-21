@@ -21,6 +21,11 @@ resource "databricks_schema" "gmpdi" {
   catalog_name = var.catalog
   name         = var.schema
   comment      = "GMP Deviation Investigator: IndPenSim process data and openFDA recalls. Managed by Terraform (infra/databricks)."
+
+  lifecycle {
+    # Databricks sets system properties (e.g. owner) itself; don't fight them on every plan.
+    ignore_changes = [properties]
+  }
 }
 
 resource "databricks_volume" "landing" {
