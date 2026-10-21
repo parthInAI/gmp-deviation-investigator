@@ -98,3 +98,35 @@ def test_producer_refuses_unregistered_schema(sample_csv):
     replayer.replay(sample_csv, sink, batches={1}, replay_id="t5")
     with pytest.raises(SchemaRegistryError):
         ser(sink.sent[0][1], SerializationContext(SENSOR_TOPIC.name, MessageField.VALUE))
+
+
+def test_batch_id_offset_and_non_numeric_values(tmp_path):
+    from streaming.sample_data import make_frame, write_csv
+
+    frame = make_frame(n_batches=2, rows=10, seed=4)
+    frame["pH(pH:pH)"] = frame["pH(pH:pH)"].map(lambda v: f"{v:.2f} pH")  # retyped to text upstream
+    path = tmp_path / "drift.csv"
+    write_csv(frame, path)
+    sink = ListSink()
+    manifest = replayer.replay(path, sink, batch_id_offset=9000)
+    assert {r["batch_id"] for _, r in sink.sent} == {9001, 9002}
+    assert {k for k, _ in sink.sent} == {"9001", "9002"}
+    assert all(r["ph"] is None for _, r in sink.sent)
+    assert manifest["source_schema"]["non_numeric_values_nulled"] == {"ph": len(sink.sent)}
+    # event times still come from the source batch (plant clock), not the shifted id
+    first = next(r for _, r in sink.sent if r["batch_id"] == 9001)
+    assert first["event_time"] < 1_700_000_000_000
+
+
+def test_manifest_reports_renamed_column(tmp_path):
+    from streaming.sample_data import make_frame, write_csv
+
+    frame = make_frame(n_batches=1, rows=5, seed=4).rename(
+        columns={"Dissolved oxygen concentration(DO2:mg/L)": "Dissolved oxygen concentration(DOT:%)"}
+    )
+    path = tmp_path / "renamed.csv"
+    write_csv(frame, path)
+    manifest = replayer.replay(path, ListSink())
+    src = manifest["source_schema"]
+    assert src["unknown_columns_dropped"] == ["Dissolved oxygen concentration(DOT:%)"]
+    assert src["contract_fields_missing_from_file"] == ["dissolved_oxygen_mgpl"]

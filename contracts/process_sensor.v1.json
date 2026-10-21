@@ -1,0 +1,215 @@
+{
+  "contract": "process_sensor",
+  "version": 1,
+  "description": "Data contract for IndPenSim process readings (topic process.sensor.v1). Ranges cover every real reading with margin but reject unit changes (e.g. temperature in degC). Online sensors are required; offline lab assays are sparse by nature and optional.",
+  "key": [
+    "batch_id",
+    "seq"
+  ],
+  "approved_schemas": [
+    "sensor_reading.avsc"
+  ],
+  "fields": {
+    "batch_id": {
+      "required": true,
+      "min": 1
+    },
+    "seq": {
+      "required": true,
+      "min": 1
+    },
+    "time_h": {
+      "required": true,
+      "min": 0,
+      "max": 400
+    },
+    "event_time": {
+      "required": true
+    },
+    "replay_id": {
+      "required": true
+    },
+    "fault_ref": {
+      "required": true,
+      "min": 0,
+      "max": 10
+    },
+    "fault_flag": {
+      "required": true,
+      "allowed": [
+        0,
+        1
+      ]
+    },
+    "control_ref": {
+      "required": true,
+      "allowed": [
+        0,
+        1
+      ]
+    },
+    "pat_ref": {
+      "required": true,
+      "allowed": [
+        1,
+        2
+      ]
+    },
+    "batch_ref": {
+      "required": false,
+      "min": 0
+    },
+    "aeration_rate_lph": {
+      "required": true,
+      "min": 0,
+      "max": 150
+    },
+    "agitator_rpm": {
+      "required": true,
+      "min": 0,
+      "max": 300
+    },
+    "sugar_feed_rate_lph": {
+      "required": true,
+      "min": 0,
+      "max": 300
+    },
+    "acid_flow_rate_lph": {
+      "required": true,
+      "min": 0,
+      "max": 50
+    },
+    "base_flow_rate_lph": {
+      "required": true,
+      "min": 0,
+      "max": 500
+    },
+    "cooling_water_flow_lph": {
+      "required": true,
+      "min": 0,
+      "max": 3000
+    },
+    "heating_water_flow_lph": {
+      "required": true,
+      "min": 0,
+      "max": 3000
+    },
+    "water_injection_flow_lph": {
+      "required": true,
+      "min": 0,
+      "max": 1000
+    },
+    "air_head_pressure_bar": {
+      "required": true,
+      "min": 0.3,
+      "max": 2.5
+    },
+    "dumped_broth_flow_lph": {
+      "required": true,
+      "min": -10000,
+      "max": 0,
+      "note": "IndPenSim records broth removal as a negative flow"
+    },
+    "substrate_conc_gpl": {
+      "required": true,
+      "min": 0,
+      "max": 200
+    },
+    "dissolved_oxygen_mgpl": {
+      "required": true,
+      "min": 0,
+      "max": 25
+    },
+    "penicillin_conc_gpl": {
+      "required": true,
+      "min": 0,
+      "max": 60
+    },
+    "vessel_volume_l": {
+      "required": true,
+      "min": 40000,
+      "max": 120000
+    },
+    "vessel_weight_kg": {
+      "required": true,
+      "min": 40000,
+      "max": 130000
+    },
+    "ph": {
+      "required": true,
+      "min": 4.0,
+      "max": 8.0
+    },
+    "temperature_k": {
+      "required": true,
+      "min": 285,
+      "max": 315
+    },
+    "generated_heat_kj": {
+      "required": true,
+      "min": 0,
+      "max": 5000
+    },
+    "offgas_co2_pct": {
+      "required": true,
+      "min": 0,
+      "max": 20
+    },
+    "paa_flow_lph": {
+      "required": true,
+      "min": 0,
+      "max": 50
+    },
+    "paa_offline_gpl": {
+      "required": false,
+      "min": 0,
+      "max": 20000
+    },
+    "oil_flow_lph": {
+      "required": true,
+      "min": 0,
+      "max": 100
+    },
+    "nh3_offline_gpl": {
+      "required": false,
+      "min": 0,
+      "max": 10000
+    },
+    "oxygen_uptake_rate": {
+      "required": true,
+      "min": -5,
+      "max": 20,
+      "note": "small negative values occur in the simulator"
+    },
+    "offgas_o2_pct": {
+      "required": true,
+      "min": 0,
+      "max": 30
+    },
+    "penicillin_offline_gpl": {
+      "required": false,
+      "min": 0,
+      "max": 60
+    },
+    "biomass_offline_gpl": {
+      "required": false,
+      "min": 0,
+      "max": 60
+    },
+    "carbon_evolution_rate": {
+      "required": true,
+      "min": 0,
+      "max": 10
+    },
+    "ammonia_shots_kg": {
+      "required": true,
+      "min": 0,
+      "max": 100
+    },
+    "viscosity_offline_cp": {
+      "required": false,
+      "min": 0,
+      "max": 500
+    }
+  }
+}

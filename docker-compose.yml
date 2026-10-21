@@ -1,13 +1,43 @@
-# Phase 1 stack: Redpanda (Kafka API + schema registry), Console, and two
-# one-shot tool containers (app = Python producers/gate, spark = bronze job).
+# Stack: Redpanda (Kafka API + schema registry), Console, and one-shot tool
+# containers (app = Python producers/gates, spark* = bronze, silver, gold jobs).
 #
 #   docker compose up -d --wait            # broker, registry, console (http://localhost:8080)
 #   docker compose run --rm app python -m streaming.registry register
 #   docker compose run --rm app python -m streaming.replayer --csv data/raw/<file>.csv
 #   docker compose run --rm spark          # Kafka -> bronze Delta (availableNow)
 #   docker compose run --rm app python -m lakehouse.gate_check
+#   docker compose run --rm spark-silver   # bronze -> silver / quarantine / alerts
+#   docker compose run --rm spark-gold     # silver -> gold
 
 name: gmpdi
+
+# Shared by the three Spark services. JOB picks the script (see
+# orchestration/spark-job.sh); extra arguments after the service name go to the
+# script, e.g. `docker compose run --rm spark --trigger continuous`.
+x-spark: &spark
+  build:
+    context: .
+    dockerfile: Dockerfile.spark
+    args:
+      SPARK_IMAGE_TAG: ${SPARK_IMAGE_TAG:-4.0.4-java21-python3}
+  image: gmpdi-spark:dev   # apache/spark + pinned Kafka/Avro/Delta jars + our code
+  profiles: ["tools"]
+  user: root  # the named volumes are root-owned; fine for a local dev box
+  environment: &spark-env
+    JOB: bronze.py
+    SPARK_DRIVER_MEMORY: ${SPARK_DRIVER_MEMORY:-2g}
+    KAFKA_BOOTSTRAP: redpanda:9092
+    SCHEMA_REGISTRY_URL: http://redpanda:8081
+    LAKEHOUSE_DIR: /lakehouse
+    GMPDI_TOPIC_SUFFIX: ${GMPDI_TOPIC_SUFFIX:-}
+  volumes:  # code is also baked into the image; the mounts let you edit without rebuilding
+    - ./lakehouse:/opt/app/lakehouse:ro
+    - ./contracts:/opt/app/contracts:ro
+    - ./streaming/schemas:/opt/app/streaming/schemas:ro
+    - lakehouse:/lakehouse
+  depends_on:
+    redpanda:
+      condition: service_healthy
 
 services:
   redpanda:
@@ -70,10 +100,13 @@ services:
       KAFKA_BOOTSTRAP: redpanda:9092
       SCHEMA_REGISTRY_URL: http://redpanda:8081
       OPENFDA_API_KEY: ${OPENFDA_API_KEY:-}
+      GMPDI_TOPIC_SUFFIX: ${GMPDI_TOPIC_SUFFIX:-}
       PYTHONPATH: /app
     volumes:
       - ./streaming:/app/streaming:ro
       - ./lakehouse:/app/lakehouse:ro
+      - ./contracts:/app/contracts:ro
+      - ./drift:/app/drift:ro
       - ./tests/fixtures:/app/tests/fixtures:ro
       - ${RAW_DATA_DIR:-./data/raw}:/app/data/raw:ro
       - ./out:/app/out
@@ -93,31 +126,55 @@ services:
       - ${RAW_DATA_DIR:-./data/raw}:/data
     command: ["python", "-m", "streaming.fetch_data", "--dest", "/data"]
 
+  # Three Spark jobs, one image and one set of jars (the x-spark block at the top):
+  #   docker compose run --rm spark          Kafka -> bronze
+  #   docker compose run --rm spark-silver   bronze -> silver + quarantine + alerts (data contracts)
+  #   docker compose run --rm spark-gold     silver -> gold
   spark:
-    image: apache/spark:${SPARK_IMAGE_TAG:-4.0.4-java21-python3}
-    profiles: ["tools"]
-    user: root  # the named volumes are root-owned; fine for a local dev box
-    working_dir: /opt/app
-    entrypoint:
-      - /opt/spark/bin/spark-submit
-      - --driver-memory
-      - ${SPARK_DRIVER_MEMORY:-2g}
-      - --conf
-      - spark.jars.ivy=/ivy
-      - --conf
-      - spark.log.level=WARN
-      - --packages
-      - org.apache.spark:spark-sql-kafka-0-10_2.13:${SPARK_VERSION:-4.0.4},org.apache.spark:spark-avro_2.13:${SPARK_VERSION:-4.0.4},io.delta:delta-spark_2.13:${DELTA_VERSION:-4.0.1}
-      - /opt/app/lakehouse/bronze.py
+    <<: *spark
     command: ["--topic", "all"]
+
+  spark-silver:
+    <<: *spark
     environment:
-      KAFKA_BOOTSTRAP: redpanda:9092
-      LAKEHOUSE_DIR: /lakehouse
+      <<: *spark-env
+      JOB: silver.py
+    command: ["--contract", "all"]
+
+  spark-gold:
+    <<: *spark
+    environment:
+      <<: *spark-env
+      JOB: gold.py
+    command: []
+
+  # Airflow 3 (standalone: API server, scheduler, DAG processor, triggerer in one
+  # container, SQLite metadata DB). Local orchestration only, not a production setup.
+  #   docker compose --profile airflow up -d airflow     ->  http://localhost:8090
+  # Tasks start gmpdi-app / gmpdi-spark containers through the Docker socket, so
+  # build those images first: docker compose build app spark
+  airflow:
+    image: apache/airflow:${AIRFLOW_VERSION:-3.3.2-python3.12}
+    profiles: ["airflow"]
+    command: standalone
+    group_add: ["${DOCKER_GID:-0}"]  # access to the Docker socket (Linux: `getent group docker`)
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"  # local dev: no login page
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__DAG_PROCESSOR__REFRESH_INTERVAL: "30"
+      GMPDI_COMPOSE_PROJECT: gmpdi
     volumes:
-      - ./lakehouse:/opt/app/lakehouse:ro
-      - ./streaming/schemas:/opt/app/streaming/schemas:ro
-      - lakehouse:/lakehouse
-      - ivy-cache:/ivy   # jars download once, then are reused
+      - airflow-home:/opt/airflow
+      - ./orchestration/dags:/opt/airflow/dags:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8090:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/v2/version || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
     depends_on:
       redpanda:
         condition: service_healthy
@@ -125,4 +182,5 @@ services:
 volumes:
   redpanda-data:
   lakehouse:     # Delta tables live here, not in your (OneDrive-synced) project folder
-  ivy-cache:
+  pipeline-out:  # manifests and reports written by Airflow-run tasks
+  airflow-home:  # Airflow metadata DB (SQLite) and logs

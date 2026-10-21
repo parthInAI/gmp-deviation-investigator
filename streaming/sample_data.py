@@ -64,6 +64,14 @@ HEADERS = [
 RAMAN_HEADERS = ["2400", "2399", "2398", "2397"]
 
 # What the real V3 file's header row says instead of the single PAT column above.
+# Typical real-data levels for the columns whose plausible range excludes ~1.0, so
+# synthetic readings pass the data contract (contracts/process_sensor.v1.json).
+SCALE = {
+    "Dumped broth flow(Fremoved:L/h)": -500.0,  # IndPenSim records removal as a negative flow
+    "Vessel Volume(V:L)": 75_000.0,
+    "Vessel Weight(Wt:Kg)": 82_000.0,
+}
+
 BROKEN_PAT_LEGEND = ["1- No Raman spec", " 1-Raman spec recorded", "2-PAT control(PAT_ref:PAT ref)"]
 
 
@@ -75,10 +83,12 @@ def make_frame(n_batches: int = 100, rows: int = 60, seed: int = 7) -> pd.DataFr
         n = rows + int(rng.integers(-5, 6))  # batches differ in length, like the real data
         t = np.round(np.arange(1, n + 1) * 0.2, 1)
         data = {h: rng.normal(1.0, 0.05, n) for h in HEADERS}
+        for h, level in SCALE.items():
+            data[h] = data[h] * level
         data["Time (h)"] = t
         data["Temperature(T:K)"] = 298 + rng.normal(0, 0.1, n)
         data["pH(pH:pH)"] = 6.5 + rng.normal(0, 0.02, n)
-        data["Penicillin concentration(P:g/L)"] = np.linspace(0, 25, n) + rng.normal(0, 0.2, n)
+        data["Penicillin concentration(P:g/L)"] = np.clip(np.linspace(0, 25, n) + rng.normal(0, 0.2, n), 0, None)
         fault = np.zeros(n, dtype=int)
         if b > n_batches - n_fault:  # last 10%: a fault switches on mid-batch
             onset = n // 2

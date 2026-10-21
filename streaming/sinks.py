@@ -50,19 +50,25 @@ def ensure_topic(admin: AdminClient, spec: TopicSpec) -> None:
             raise
 
 
-def make_value_serializer(sr_client: SchemaRegistryClient, spec: TopicSpec) -> AvroSerializer:
+def make_value_serializer(
+    sr_client: SchemaRegistryClient, spec: TopicSpec, schema_str: str | None = None
+) -> AvroSerializer:
     # auto.register.schemas=False: producers may only use a schema that was
     # registered on purpose (python -m streaming.registry register). A producer
     # with a changed schema fails fast instead of silently creating a new version.
     return AvroSerializer(
         sr_client,
-        spec.schema_str(),
+        schema_str or spec.schema_str(),
         conf={"auto.register.schemas": False, "use.latest.version": False},
     )
 
 
 class KafkaSink:
-    def __init__(self, bootstrap: str, sr_url: str, spec: TopicSpec, create_topic: bool = True):
+    def __init__(
+        self, bootstrap: str, sr_url: str, spec: TopicSpec, create_topic: bool = True, schema_str: str | None = None
+    ):
+        """schema_str overrides the topic's .avsc; only the drift harness uses it, to
+        play a producer that shipped a changed (but registered) schema."""
         self.spec = spec
         conf = {
             "bootstrap.servers": bootstrap,
@@ -77,7 +83,9 @@ class KafkaSink:
             ensure_topic(AdminClient({"bootstrap.servers": bootstrap}), spec)
         self.producer = Producer(conf)
         self.key_ser = StringSerializer("utf_8")
-        self.value_ser = make_value_serializer(SchemaRegistryClient.new_client({"url": sr_url}), spec)
+        self.value_ser = make_value_serializer(
+            SchemaRegistryClient.new_client({"url": sr_url}), spec, schema_str
+        )
         self.errors = 0
         self.delivered = 0
 

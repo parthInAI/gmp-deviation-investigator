@@ -35,8 +35,12 @@ class TopicSpec:
         return json.loads(self.schema_str())
 
 
-SENSOR_TOPIC = TopicSpec("process.sensor.v1", "sensor_reading.avsc", partitions=6, retention_ms=-1)
-RECALL_TOPIC = TopicSpec("quality.fda_recall.v1", "recall_event.avsc", partitions=1, retention_ms=-1)
+# GMPDI_TOPIC_SUFFIX isolates a test environment on the same broker, e.g.
+# ".driftgate" -> process.sensor.v1.driftgate, with its own registry subject.
+TOPIC_SUFFIX = os.environ.get("GMPDI_TOPIC_SUFFIX", "")
+
+SENSOR_TOPIC = TopicSpec(f"process.sensor.v1{TOPIC_SUFFIX}", "sensor_reading.avsc", partitions=6, retention_ms=-1)
+RECALL_TOPIC = TopicSpec(f"quality.fda_recall.v1{TOPIC_SUFFIX}", "recall_event.avsc", partitions=1, retention_ms=-1)
 TOPICS = {t.name: t for t in (SENSOR_TOPIC, RECALL_TOPIC)}
 
 

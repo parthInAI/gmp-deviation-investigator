@@ -243,6 +243,27 @@ def _clean(value):
     return value
 
 
+def coerce_numeric(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Force every measurement/flag column to numbers.
+
+    A column that arrives as text (a retyped column upstream, e.g. "6.5 pH") would
+    otherwise crash the replay or, worse, be half-parsed. Values that are not numbers
+    become null, which the data contract then rejects for required fields. Returns
+    the frame and, per column, how many non-empty values had to be nulled.
+    """
+    coerced: dict[str, int] = {}
+    out = frame
+    for col in frame.columns:
+        if col in ("time_h", "batch_id") or pd.api.types.is_numeric_dtype(frame[col]):
+            continue
+        num = pd.to_numeric(frame[col], errors="coerce")
+        bad = int((num.isna() & frame[col].notna()).sum())
+        if bad:
+            coerced[col] = bad
+        out = out.assign(**{col: num})
+    return out, coerced
+
+
 # Simulated plant clock: batch k starts at BASE + (k-1) * BATCH_SPACING_H hours.
 # Deterministic, so a re-replay produces identical event times (needed for dedup).
 PLANT_EPOCH_MS = 1_672_531_200_000  # 2023-01-01T00:00:00Z; 100 batches x 240 h ends Sep 2025

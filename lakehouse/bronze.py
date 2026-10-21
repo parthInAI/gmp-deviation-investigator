@@ -16,16 +16,19 @@ it, stop. Same code also runs continuously with --trigger continuous.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 from pathlib import Path
 
 from pyspark.sql import Column, DataFrame, SparkSession
 from pyspark.sql import functions as F
 
-# topic -> (Avro schema file, bronze table name)
+# topic -> (Avro schema file, bronze table name). GMPDI_TOPIC_SUFFIX (see
+# streaming/config.py) points the job at an isolated set of test topics.
+_SUFFIX = os.environ.get("GMPDI_TOPIC_SUFFIX", "")
 BRONZE_TABLES: dict[str, tuple[str, str]] = {
-    "process.sensor.v1": ("sensor_reading.avsc", "process_sensor"),
-    "quality.fda_recall.v1": ("recall_event.avsc", "fda_recall"),
+    f"process.sensor.v1{_SUFFIX}": ("sensor_reading.avsc", "process_sensor"),
+    f"quality.fda_recall.v1{_SUFFIX}": ("recall_event.avsc", "fda_recall"),
 }
 
 # Confluent wire format: 1 magic byte (0x00) + 4-byte big-endian schema id + Avro body.
@@ -53,14 +56,31 @@ def kafka_envelope(df: DataFrame) -> DataFrame:
     ).withColumn("ingest_date", F.to_date("ingest_ts"))
 
 
+def non_nullable_fields(avro_schema_json: str) -> list[str]:
+    """Fields the schema says can never be null (type is not a union with "null")."""
+    fields = json.loads(avro_schema_json)["fields"]
+    return [f["name"] for f in fields if not (isinstance(f["type"], list) and "null" in f["type"])]
+
+
 def decode(df: DataFrame, avro_schema_json: str) -> DataFrame:
-    """Add payload (decoded struct) and decode_ok. PERMISSIVE: bad bytes -> null, not a crash."""
+    """Add payload (decoded struct) and decode_ok. PERMISSIVE: bad bytes never crash the stream.
+
+    In Spark 4, PERMISSIVE from_avro does NOT return null for bytes it cannot
+    decode: it returns a struct whose fields are all null. So "payload is not
+    null" is not proof of a good decode. A record only counts as decoded if every
+    field the schema declares non-nullable is present. (Found by the Phase 2 drift
+    gate: a registry-compatible dropped field produced 200 all-null rows that the
+    old check marked as decoded.)
+    """
     from pyspark.sql.avro.functions import from_avro  # needs the spark-avro package
 
     body = F.expr(f"substring(raw_value, {WIRE_HEADER_BYTES + 1})")
     payload = from_avro(body, avro_schema_json, {"mode": "PERMISSIVE"})
+    ok = F.col("payload").isNotNull()
+    for name in non_nullable_fields(avro_schema_json):
+        ok = ok & F.col(f"payload.{name}").isNotNull()
     return df.withColumn("payload", F.when(F.col("schema_id").isNotNull(), payload)).withColumn(
-        "decode_ok", F.col("payload").isNotNull()
+        "decode_ok", F.coalesce(ok, F.lit(False))
     )
 
 
@@ -103,8 +123,8 @@ def start_stream(
         .partitionBy("ingest_date")
         .queryName(f"bronze_{table}")
     )
-    writer = writer.trigger(availableNow=True) if trigger == "available-now" else writer.trigger(
-        processingTime="10 seconds"
+    writer = (
+        writer.trigger(availableNow=True) if trigger == "available-now" else writer.trigger(processingTime="10 seconds")
     )
     return writer.start(f"{lakehouse}/bronze/{table}")
 

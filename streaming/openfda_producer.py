@@ -43,11 +43,17 @@ STRING_FIELDS = [
     for f in RECALL_TOPIC.schema_dict()["fields"]
     if f["type"] in ("string", ["null", "string"])
 ]
+# Keys openFDA sends that the producer reads, or knowingly ignores (address and
+# extra code details are not used anywhere downstream).
+IGNORED_KEYS = {"address_1", "address_2", "postal_code", "more_code_info"}
 OPENFDA_ARRAYS = {
     "openfda_brand_name": "brand_name",
     "openfda_generic_name": "generic_name",
     "openfda_manufacturer_name": "manufacturer_name",
 }
+
+
+KNOWN_KEYS = set(STRING_FIELDS) | IGNORED_KEYS | {"openfda"}
 
 
 def normalise(raw: dict, ingested_at_ms: int) -> dict | None:
@@ -118,7 +124,11 @@ def run(raw_records, sink: Sink) -> dict:
     sent = skipped = 0
     max_date = ""
     seen: set[str] = set()
+    unknown_keys: dict[str, int] = {}  # keys openFDA sent that the contract does not know
     for raw in raw_records:
+        for k in raw:
+            if k not in KNOWN_KEYS:
+                unknown_keys[k] = unknown_keys.get(k, 0) + 1
         rec = normalise(raw, now_ms)
         if rec is None or rec["recall_number"] in seen:
             skipped += 1
@@ -128,7 +138,9 @@ def run(raw_records, sink: Sink) -> dict:
         sent += 1
         max_date = max(max_date, rec["report_date"] or "")
     sink.close()
-    return {"sent": sent, "skipped": skipped, "max_report_date": max_date or None}
+    if unknown_keys:
+        log.warning("openFDA keys not in the contract (dropped): %s", unknown_keys)
+    return {"sent": sent, "skipped": skipped, "max_report_date": max_date or None, "unknown_keys": unknown_keys}
 
 
 def main(argv: list[str] | None = None) -> int:

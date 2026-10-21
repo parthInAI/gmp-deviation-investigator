@@ -36,7 +36,14 @@ def test_run_skips_bad_and_duplicate_records():
     sink = ListSink()
     result = fda.run(FIXTURE["results"], sink)
     assert [k for k, _ in sink.sent] == ["D-0101-2026", "D-0102-2026"]
-    assert result == {"sent": 2, "skipped": 2, "max_report_date": "20260218"}
+    assert result == {"sent": 2, "skipped": 2, "max_report_date": "20260218", "unknown_keys": {}}
+
+
+def test_run_reports_keys_the_contract_does_not_know():
+    raw = dict(FIXTURE["results"][0])
+    raw["reportDate"] = raw.pop("report_date")  # upstream renamed a key
+    result = fda.run([raw], ListSink())
+    assert result["unknown_keys"] == {"reportDate": 1}
 
 
 class FakeResponse:

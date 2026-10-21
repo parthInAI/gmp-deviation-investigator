@@ -1,0 +1,31 @@
+# Spark jobs image: bronze.py, silver.py, gold.py.
+#
+# The Kafka, Avro and Delta jars are baked in at build time, each pinned by
+# SHA-256, instead of `--packages` downloading them at every run. So a job never
+# depends on Maven Central being up, two runs can never get different jars, and
+# Airflow can start the container with no network beyond the broker.
+# Versions must change together (Delta 4.0.x <-> Spark 4.0.x; kafka-clients is
+# whatever spark-sql-kafka for that Spark release depends on).
+ARG SPARK_IMAGE_TAG=4.0.4-java21-python3
+FROM apache/spark:${SPARK_IMAGE_TAG}
+
+ARG MVN=https://repo1.maven.org/maven2
+USER root
+ADD --chmod=644 --checksum=sha256:a1e76860b19fe1e6b205a4ea7a9099a2f9575d39bb71d49b3e679b299d0efb91 ${MVN}/io/delta/delta-spark_2.13/4.0.1/delta-spark_2.13-4.0.1.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:ecc42c5aaa51c423312d9e4e48aa4a12b34740bf2c37de0e8f279277ec3d12e4 ${MVN}/io/delta/delta-storage/4.0.1/delta-storage-4.0.1.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:f2862c13564bf6cd78cfdfe7b902ef07e68d1d6a5edd9fde336c0cf0fcdb8c55 ${MVN}/org/apache/spark/spark-avro_2.13/4.0.4/spark-avro_2.13-4.0.4.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:b2f7b3a4fbf292b5bf10bd4dd6af301eded9c9985b16239b407401d66dbc8a25 ${MVN}/org/apache/spark/spark-sql-kafka-0-10_2.13/4.0.4/spark-sql-kafka-0-10_2.13-4.0.4.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:ae9817053af94a21992e948269eba1a50d511333cb51462865983abfbeea7f60 ${MVN}/org/apache/spark/spark-token-provider-kafka-0-10_2.13/4.0.4/spark-token-provider-kafka-0-10_2.13-4.0.4.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:7568b998572d256f0b7bc0afdc1b7a2588b8b08415c62ce314c864a6851ae9d9 ${MVN}/org/apache/kafka/kafka-clients/3.9.1/kafka-clients-3.9.1.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:6d3bd18df8410f3e31b031aca582cc109342358a62a2759ebd0c4cdf30d06f8b ${MVN}/org/apache/commons/commons-pool2/2.12.0/commons-pool2-2.12.0.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:4eae6e68cf44e9f709970355590ae981883edf6484608d747376a56cbb285432 ${MVN}/org/scala-lang/modules/scala-parallel-collections_2.13/1.2.0/scala-parallel-collections_2.13-1.2.0.jar /opt/spark/jars/
+ADD --chmod=644 --checksum=sha256:95c63c1a55b22dd6453890a419cc1a640f790bbf7d8ae82db1e30aefefb08888 ${MVN}/org/tukaani/xz/1.10/xz-1.10.jar /opt/spark/jars/
+
+WORKDIR /opt/app
+COPY lakehouse ./lakehouse
+COPY contracts ./contracts
+COPY streaming/schemas ./streaming/schemas
+COPY --chmod=755 orchestration/spark-job.sh /opt/app/spark-job.sh
+
+ENV LAKEHOUSE_DIR=/lakehouse JOB=bronze.py
+ENTRYPOINT ["/opt/app/spark-job.sh"]

@@ -2,9 +2,12 @@
 
 [![ci](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml/badge.svg)](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml)
 ![Phase 1](https://img.shields.io/badge/phase_1-gate_passed-2ea043)
+![Phase 2](https://img.shields.io/badge/phase_2-gate_passed-2ea043)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-**Phase 1 results:** 100/100 batches and 113,935/113,935 readings in bronze, locally and on Databricks. [See the evidence →](docs/phase1/RESULTS.md)
+**Phase 1 results:** 100/100 batches and 113,935/113,935 readings in bronze, locally and on Databricks. [Evidence →](docs/phase1/RESULTS.md)
+
+**Phase 2 results:** 10 of 10 injected kinds of schema drift caught, 0 of 1,206 drifted records reached silver, and every bronze record is accounted for in silver or quarantine. [Evidence →](docs/phase2/RESULTS.md)
 
 An agentic deviation-investigation assistant for biopharma manufacturing, built on a streaming lakehouse and designed against the **draft** EU GMP Annex 22 rules for AI.
 
@@ -17,20 +20,27 @@ It watches a simulated 100,000 L penicillin fermentation (IndPenSim) in near rea
 | Phase | Weeks | Gate | State |
 |---|---|---|---|
 | 1. Data foundation | 1–2 | All 100 batches replay into bronze | **Passed** on the real data, locally and on Databricks ([results](docs/phase1/RESULTS.md)) |
-| 2. Lakehouse and orchestration | 3–4 | Injected schema changes are caught | Not started |
+| 2. Lakehouse and orchestration | 3–4 | Injected schema changes are caught | **Passed**: 10/10 drift scenarios caught on the real data, in CI and nightly in Airflow ([results](docs/phase2/RESULTS.md)) |
 | 3. Detection model | 5–6 | Faults caught on held-out batches | Not started |
 | 4. Agent team | 7–8 | Cited draft for all 10 fault batches | Not started |
 | 5. Review, deploy, evidence | 9–10 | Public repo and demo live | Not started |
 
-## Phase 1 architecture
+## Architecture (Phases 1–2)
 
 ```
 IndPenSim CSV ──► replayer ──► Redpanda (Kafka API) ──► Spark Structured Streaming ──► bronze Delta
- (100 batches)    Avro +        topic process.sensor.v1      availableNow / continuous      raw bytes + decoded payload
-                  schema reg.   key = batch_id                                              decode_ok flag
-openFDA API ────► recall producer ──► topic quality.fda_recall.v1 ──────────────────────► bronze Delta
-                                                                                              │
-                                                     gate_check (delta-rs) ◄── replay manifest ┘
+ (100 batches)    Avro +        process.sensor.v1           availableNow / continuous      raw bytes + decoded payload
+                  schema reg.                                                              │
+openFDA API ────► recall producer ──► quality.fda_recall.v1 ─────────────────────────────►│
+                                                                                            ▼
+                          contracts/*.json ──► silver.py ──► silver   (valid, deduplicated, insert-only MERGE)
+                                                         ├─► quarantine (payload, raw bytes, every reason)
+                                                         └─► alerts   (records per reason, per run)
+                                                gold.py ──► batch_summary · golden_profile · recall_summary
+                                           reconcile.py ──► bronze = silver + duplicates + quarantine
+
+Airflow 3: gmpdi_lakehouse (hourly)  ·  gmpdi_drift_gate (nightly: 10 kinds of drift + 2 controls)
+Terraform: Databricks schema, volume, Git folder, job (infra/databricks)
 ```
 
 Databricks Free Edition can't reach a broker on a laptop, so on Databricks the same records arrive as NDJSON in a Unity Catalog Volume and Auto Loader writes the bronze tables. Both paths use the same `.avsc` contracts.
@@ -79,11 +89,38 @@ Useful variations:
 docker compose run --rm spark --trigger continuous                # keep streaming into bronze
 ```
 
+## Run Phase 2
+
+After the Phase 1 steps (bronze is loaded), build the Spark image once (the Kafka, Avro and Delta jars are baked in, pinned by SHA-256):
+
+```bash
+docker compose build app spark
+docker compose run --rm spark-silver                     # contracts -> silver / quarantine / alerts
+docker compose run --rm spark-gold                       # gold tables
+docker compose run --rm app python -m lakehouse.reconcile
+```
+
+**The Phase 2 gate.** It runs on isolated `*.driftgate` topics and `/lakehouse/driftgate`, so your real data is never touched (PowerShell: `$env:GMPDI_TOPIC_SUFFIX=".driftgate"`):
+
+```bash
+export GMPDI_TOPIC_SUFFIX=.driftgate
+docker compose run --rm app python -m drift.inject --csv data/raw/100_Batches_IndPenSim_V3.csv
+docker compose run --rm spark --topic all --lakehouse /lakehouse/driftgate
+docker compose run --rm spark-silver --contract all --lakehouse /lakehouse/driftgate
+docker compose run --rm app python -m drift.check      # GATE PASSED; report in out/gate/phase2_gate.json
+unset GMPDI_TOPIC_SUFFIX
+```
+
+**Airflow:** `docker compose --profile airflow up -d --wait airflow`, then open http://localhost:8090 (no login on this local setup). Unpause `gmpdi_lakehouse` or `gmpdi_drift_gate`, or press Trigger.
+
+**Databricks:** `lakehouse/databricks/silver_gold.py` runs the same silver/gold code on the Auto Loader bronze; `infra/databricks/` creates the schema, volume, Git folder and job with Terraform ([how](infra/databricks/README.md)).
+
 ## Working in VS Code
 
 Open `gmp-deviation-investigator.code-workspace`. Every step above is a task: Ctrl+Shift+P → **Tasks: Run Task**.
 
 - **Phase 1 gate on sample data (all steps)** runs the whole pipeline in order.
+- **Phase 2: silver + gold + reconcile on REAL data** and **Phase 2 GATE: drift injection on REAL data (all steps)** run Phase 2; **Airflow: start** and **Open Airflow UI** for the DAGs.
 - **LIVE DEMO: fault batch 94 streaming** replays fault batch 94 at 2 h of plant time per second while a second terminal shows each reading arriving on Kafka. Fault readings are marked `<< FAULT`.
 - **Open Redpanda Console** shows topics, schemas and messages at http://localhost:8080.
 - Tests appear in the Testing sidebar after **Setup: local Python venv for tests**.
@@ -102,18 +139,22 @@ pip install -e ".[lakehouse,spark,dev]"    # Python 3.11+; the Spark tests also 
 ruff check . && pytest
 ```
 
-CI runs the unit tests, then the whole Phase 1 gate end to end in Docker on synthetic data (`.github/workflows/ci.yml`).
+CI runs the unit tests, Terraform `validate` and an Airflow DAG import check, then both gates end to end in Docker on synthetic data (`.github/workflows/ci.yml`).
 
-## Repo layout (Phase 1)
+## Repo layout
 
 ```
-streaming/      replayer, openFDA producer, schema registry CLI, Avro contracts (schemas/*.avsc)
-lakehouse/      bronze.py (Spark), gate_check.py (delta-rs), databricks/ notebook
-tests/          66 tests; test_pipeline_offline.py runs the gate on 100 synthetic batches
-docs/phase1/    design notes (NOTES.md) and gate results (RESULTS.md)
+streaming/      replayer, openFDA producer, schema registry CLI, Avro schemas (schemas/*.avsc)
+contracts/      data contracts: required fields, ranges, allowed values, formats
+lakehouse/      bronze.py, silver.py, gold.py (Spark), gate_check.py + reconcile.py (delta-rs), databricks/ notebooks
+drift/          schema-drift scenarios, injector and the Phase 2 gate check
+orchestration/  Airflow DAGs and the Spark image entrypoint
+infra/          Terraform for the Databricks objects
+tests/          130 tests: unit, Spark (silver/gold parity with the Python reference), offline pipeline
+docs/           design notes (NOTES.md) and gate results (RESULTS.md) per phase
 ```
 
-Later phases add `orchestration/`, `models/`, `mcp_servers/`, `agents/`, `api/`, `ui/`, `evals/` and `infra/`, following the project plan.
+Later phases add `models/`, `mcp_servers/`, `agents/`, `api/`, `ui/` and `evals/`, following the project plan.
 
 ## Data sources
 

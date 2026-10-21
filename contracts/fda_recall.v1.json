@@ -1,0 +1,63 @@
+{
+  "contract": "fda_recall",
+  "version": 1,
+  "description": "Data contract for openFDA drug enforcement records (topic quality.fda_recall.v1).",
+  "key": [
+    "recall_number"
+  ],
+  "approved_schemas": [
+    "recall_event.avsc"
+  ],
+  "fields": {
+    "recall_number": {
+      "required": true,
+      "pattern": "^[A-Z]-[0-9]{4}-[0-9]{4}$"
+    },
+    "classification": {
+      "required": true,
+      "allowed": [
+        "Class I",
+        "Class II",
+        "Class III",
+        "Not Yet Classified"
+      ]
+    },
+    "status": {
+      "required": true,
+      "allowed": [
+        "Ongoing",
+        "Completed",
+        "Terminated",
+        "Pending"
+      ]
+    },
+    "reason_for_recall": {
+      "required": true
+    },
+    "recalling_firm": {
+      "required": true
+    },
+    "product_description": {
+      "required": true
+    },
+    "report_date": {
+      "required": true,
+      "pattern": "^[0-9]{8}$"
+    },
+    "recall_initiation_date": {
+      "required": false,
+      "pattern": "^[0-9]{8}$"
+    },
+    "center_classification_date": {
+      "required": false,
+      "pattern": "^[0-9]{8}$"
+    },
+    "termination_date": {
+      "required": false,
+      "pattern": "^[0-9]{8}$"
+    },
+    "ingested_at": {
+      "required": true
+    }
+  }
+}

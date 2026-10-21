@@ -21,9 +21,30 @@ jobs:
       - run: ruff check .
       - run: pytest -q
 
-  # The Phase 1 gate, end to end, on synthetic IndPenSim-shaped data:
-  # Redpanda + schema registry -> replayer -> Spark Structured Streaming -> bronze Delta -> gate check.
-  phase1-gate:
+  # Static checks for the orchestration and infrastructure code.
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.16.5"
+      - name: Terraform fmt + validate (no credentials needed)
+        working-directory: infra/databricks
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false -input=false
+          terraform validate
+      - name: Airflow DAGs import and have the expected tasks
+        run: |
+          docker run --rm -v "$PWD/orchestration:/opt/gmpdi:ro" -e PYTHONPATH=/opt/gmpdi/dags \
+            -e AIRFLOW__CORE__LOAD_EXAMPLES=False --entrypoint python \
+            apache/airflow:3.3.2-python3.12 /opt/gmpdi/check_dags.py
+
+  # Both gates end to end on synthetic IndPenSim-shaped data:
+  # Phase 1: Redpanda + registry -> replayer -> Spark -> bronze Delta -> gate check
+  # Phase 2: silver (contracts) -> gold -> reconcile, then the drift gate on isolated topics
+  pipeline-gates:
     needs: unit
     runs-on: ubuntu-latest
     steps:
@@ -34,8 +55,10 @@ jobs:
       - run: pip install -e .
       - name: Generate 100 synthetic batches
         run: python -m streaming.sample_data --out data/raw/sample_indpensim.csv --batches 100 --rows 40
-      - name: Start Redpanda
-        run: docker compose up -d --wait redpanda
+      - name: Start Redpanda, build images
+        run: |
+          docker compose up -d --wait redpanda
+          docker compose build app spark
       - name: Register Avro contracts
         run: docker compose run --rm app python -m streaming.registry register
       - name: Replay all batches
@@ -44,12 +67,26 @@ jobs:
         run: docker compose run --rm app python -m streaming.openfda_producer --fixture tests/fixtures/openfda_enforcement.json
       - name: Kafka -> bronze Delta (Spark)
         run: docker compose run --rm spark
-      - name: Gate check
+      - name: Phase 1 gate
         run: docker compose run --rm app python -m lakehouse.gate_check --lakehouse /lakehouse
+      - name: bronze -> silver (contracts) -> gold
+        run: |
+          docker compose run --rm spark-silver
+          docker compose run --rm spark-gold
+      - name: Reconcile (no record lost between layers)
+        run: docker compose run --rm app python -m lakehouse.reconcile --lakehouse /lakehouse
+      - name: Phase 2 drift gate (isolated .driftgate topics)
+        env:
+          GMPDI_TOPIC_SUFFIX: .driftgate
+        run: |
+          docker compose run --rm app python -m drift.inject --csv data/raw/sample_indpensim.csv
+          docker compose run --rm spark --topic all --lakehouse /lakehouse/driftgate
+          docker compose run --rm spark-silver --contract all --lakehouse /lakehouse/driftgate
+          docker compose run --rm app python -m drift.check
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase1-gate
+          name: pipeline-gates
           path: out/
       - if: failure()
         run: docker compose logs redpanda

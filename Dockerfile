@@ -1,4 +1,4 @@
-# Python tools image: replayer, openFDA producer, registry CLI, data fetcher, gate check.
+# Python tools image: replayer, openFDA producer, registry CLI, data fetcher, gate checks, drift harness.
 # Dependencies are installed from pyproject.toml alone, so editing code never
 # re-runs pip. docker-compose bind-mounts the source (PYTHONPATH=/app), so code
 # edits need no rebuild at all; rebuild only when dependencies change.
@@ -16,5 +16,8 @@ RUN mkdir -p streaming lakehouse \
 
 COPY streaming ./streaming
 COPY lakehouse ./lakehouse
+COPY contracts ./contracts
+COPY drift ./drift
+COPY tests/fixtures ./tests/fixtures
 
 CMD ["python", "-m", "streaming.replayer", "--help"]

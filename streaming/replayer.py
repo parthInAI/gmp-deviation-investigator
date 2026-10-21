@@ -77,20 +77,40 @@ def replay(
     speed: float = 0.0,
     replay_id: str | None = None,
     log_every: int = 50_000,
+    batch_id_offset: int = 0,
 ) -> dict:
+    """Send the batches to `sink`; return the manifest.
+
+    batch_id_offset shifts the published batch ids (the drift harness uses 9000+,
+    so injected batches can never be confused with real ones). Event times are
+    still computed from the source batch id.
+    """
     replay_id = replay_id or f"replay-{datetime.now(UTC):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}"
     started = time.monotonic()
     rows_per_batch: dict[int, int] = {}
     fault_batches: list[int] = []
+    coerced: dict[str, int] = {}
     sent = 0
 
-    for batch_id, frame in indpensim.iter_batches(csv_path):
-        if batches is not None and batch_id not in batches:
+    # Source-schema check, recorded in every manifest: drift caught at the door.
+    source = inspect(csv_path)
+    for what in ("unknown_columns_dropped", "contract_fields_missing_from_file"):
+        if source[what]:
+            log.warning("source schema: %s = %s", what, source[what])
+
+    for source_batch_id, frame in indpensim.iter_batches(csv_path):
+        if batches is not None and source_batch_id not in batches:
             continue
+        frame, bad = indpensim.coerce_numeric(frame)
+        for col, k in bad.items():
+            coerced[col] = coerced.get(col, 0) + k
+            log.warning("batch %d: %d non-numeric values in %s set to null", source_batch_id, k, col)
+        batch_id = source_batch_id + batch_id_offset
         prev_t = None
         n = 0
         has_fault = False
-        for rec in indpensim.to_records(batch_id, frame, replay_id):
+        for rec in indpensim.to_records(source_batch_id, frame, replay_id):
+            rec["batch_id"] = batch_id
             wait = sleep_for(prev_t, rec["time_h"], speed)
             if wait:
                 time.sleep(wait)
@@ -118,6 +138,13 @@ def replay(
         "total_rows": sent,
         "rows_per_batch": {str(k): v for k, v in sorted(rows_per_batch.items())},
         "fault_batches": fault_batches,
+        "batch_id_offset": batch_id_offset,
+        "source_schema": {
+            "header_repair": source["header_repair"],
+            "unknown_columns_dropped": source["unknown_columns_dropped"],
+            "contract_fields_missing_from_file": source["contract_fields_missing_from_file"],
+            "non_numeric_values_nulled": coerced,
+        },
         "elapsed_s": round(elapsed, 2),
         "events_per_s": round(sent / elapsed, 1) if elapsed else None,
         "finished_at": datetime.now(UTC).isoformat(),
@@ -135,6 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--schema-registry", default=schema_registry_url())
     p.add_argument("--manifest", type=Path, default=Path("out/manifests/latest_replay.json"))
     p.add_argument("--inspect", action="store_true", help="print the column mapping and exit")
+    p.add_argument("--batch-id-offset", type=int, default=0, help="add this to every published batch id")
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -147,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.sink == "kafka"
         else NdjsonSink(args.out_dir, prefix="batch")
     )
-    manifest = replay(args.csv, sink, parse_batches(args.batches), args.speed)
+    manifest = replay(args.csv, sink, parse_batches(args.batches), args.speed, batch_id_offset=args.batch_id_offset)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.manifest.write_text(json.dumps(manifest, indent=2))
     log.info(
