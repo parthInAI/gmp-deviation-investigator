@@ -131,4 +131,4 @@ CSV / openFDA ─► producers ─► registry (BACKWARD) rejects incompatible s
 - The exact CI job rehearsed locally on a fresh stack: both gates pass on synthetic data.
 - Both DAGs green in Airflow 3.3.2. `terraform validate` passes against provider 1.138.0.
 
-Not yet run by me: `terraform apply` against your workspace (it needs your token), and the Databricks silver/gold notebook on real compute. Both are steps for you, in `infra/databricks/README.md`.
+- `terraform apply` on Databricks Free Edition (2 added, 2 changed, 0 destroyed), and the job's silver/gold run matched the local numbers exactly.

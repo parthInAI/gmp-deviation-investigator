@@ -33,9 +33,24 @@ Reproduce: `docker compose run --rm app python -m drift.inject --csv data/raw/<f
 | `gold/golden_profile` | 291 process hours with p10/p50/p90 across the 90 normal batches. Hours with fewer than 20 batches are flagged `low_support` (batches end between ~200 and 290 h) |
 | `gold/recall_summary` | 38 month × class rows; 229 of 840 recalls cite CGMP |
 
+## Databricks (Free Edition), deployed with Terraform
+
+`terraform apply` (infra/databricks): **2 added, 2 changed, 0 destroyed**. That adopted the schema and volume Phase 1 had created by hand, and added a Git folder pinned to `main` and the `gmpdi-lakehouse` job. One run of the job (bronze Auto Loader → silver/gold notebook, serverless) gave the same numbers as the local pipeline:
+
+| | Local (Docker, Spark 4.0.4) | Databricks (serverless) |
+|---|---:|---:|
+| Bronze readings | 113,935 | 113,935 |
+| Silver | 113,935 | 113,935 |
+| Quarantined | 0 | 0 |
+| Gold batches / fault batches | 100 / 10 | 100 / 10 |
+
+Same contracts, same transform functions (`lakehouse/silver.py`, `lakehouse/gold.py`); only the I/O differs.
+
+![Databricks silver/gold reconciliation](databricks_silver_gold.png)
+
 ## Orchestration
 
-Both DAGs ran green in Airflow 3.3.2. Each task is a container started from the project's own images:
+Both DAGs ran green in Airflow 3.3.2, in the sandbox and again on a Windows laptop (Docker Desktop), where the Phase 2 gate was also reproduced from the VS Code task. Each task is a container started from the project's own images:
 
 - `gmpdi_lakehouse` (hourly): bronze → silver → gold + reconcile, 1 min 45 s on the real data with nothing new to load.
 - `gmpdi_drift_gate` (nightly): sample data → inject → bronze → silver → gate check + reconcile, 1 min 12 s.
