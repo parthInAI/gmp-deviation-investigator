@@ -17,7 +17,8 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - run: pip install -e ".[lakehouse,spark,dev]"
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -e ".[lakehouse,spark,models,dev]"
       - run: ruff check .
       - run: pytest -q
 
@@ -83,6 +84,9 @@ jobs:
           docker compose run --rm spark --topic all --lakehouse /lakehouse/driftgate
           docker compose run --rm spark-silver --contract all --lakehouse /lakehouse/driftgate
           docker compose run --rm app python -m drift.check
+      - name: Phase 3 frozen detectors load (hash-checked) in the app image
+        run: |
+          docker compose run --rm app python -c "from models.detector import Detector; [print(n, Detector.load('models/artifacts/' + n).limits) for n in ('pca', 'lstm_ae')]"
       - if: always()
         uses: actions/upload-artifact@v4
         with:

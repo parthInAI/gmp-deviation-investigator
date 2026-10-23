@@ -69,7 +69,8 @@ class TimeProfile:
         mean[last + 1 :] = mean[last]
         std[last + 1 :] = std[last]
         global_std = train[list(features)].std(ddof=1).to_numpy()
-        std = np.maximum(np.nan_to_num(std, nan=0.0), floor * global_std)
+        # absolute floor too: a signal constant across ALL training must not divide by zero
+        std = np.maximum(np.maximum(np.nan_to_num(std, nan=0.0), floor * np.nan_to_num(global_std)), 1e-9)
         return cls(features, mean, std, support, last)
 
     def _rows(self, steps: np.ndarray) -> np.ndarray:

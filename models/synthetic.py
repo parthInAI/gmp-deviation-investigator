@@ -35,6 +35,8 @@ def inject(
     """Copy of df with one fault injected into one batch; fault_ref = 1 from onset (the ground truth)."""
     out = df.copy()
     m = (out["batch_id"] == batch_id) & (out["time_h"] >= onset_h)
+    if not m.any():  # batch ends before the onset: nothing to inject
+        return out
     t = out.loc[m, "time_h"] - onset_h
     if kind == "step":
         out.loc[m, signal] = out.loc[m, signal] + size * spread

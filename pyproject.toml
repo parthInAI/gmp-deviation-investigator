@@ -21,6 +21,7 @@ dependencies = [
 [project.optional-dependencies]
 lakehouse = ["deltalake>=1.0", "pyarrow>=17"]
 spark = ["pyspark==4.0.1"]
+models = ["torch>=2.4", "mlflow>=3.0,<4", "matplotlib>=3.8"]  # torch: install the CPU wheel first (see Dockerfile)
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [tool.setuptools.packages.find]

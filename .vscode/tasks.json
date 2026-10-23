@@ -64,6 +64,23 @@
       "osx": { "command": "open http://localhost:8090" },
       "linux": { "command": "xdg-open http://localhost:8090" }, "problemMatcher": [] },
 
+    { "label": "P3-1. Phase 3 GATE: score held-out batches with the frozen detectors", "type": "shell",
+      "command": "docker compose run --rm app python -m models.evaluate --source /lakehouse/silver/process_sensor", "problemMatcher": [] },
+    { "label": "P3-2. Phase 3: per-episode detection (post-hoc)", "type": "shell",
+      "command": "docker compose run --rm app python -m models.episodes --source /lakehouse/silver/process_sensor", "problemMatcher": [] },
+    { "label": "P3-3. Phase 3: log frozen detectors to MLflow", "type": "shell",
+      "command": "docker compose run --rm app python -m models.train --register-only", "problemMatcher": [] },
+    { "label": "P3-4. MLflow UI: start (http://localhost:5000)", "type": "shell",
+      "command": "docker compose --profile mlflow up -d mlflow", "problemMatcher": [] },
+    { "label": "Open MLflow UI", "type": "shell",
+      "windows": { "command": "Start-Process http://localhost:5000" },
+      "osx": { "command": "open http://localhost:5000" },
+      "linux": { "command": "xdg-open http://localhost:5000" }, "problemMatcher": [] },
+    { "label": "Phase 3 (all steps): gate, episodes, MLflow", "dependsOrder": "sequence",
+      "dependsOn": ["P3-1. Phase 3 GATE: score held-out batches with the frozen detectors",
+                    "P3-2. Phase 3: per-episode detection (post-hoc)", "P3-3. Phase 3: log frozen detectors to MLflow",
+                    "P3-4. MLflow UI: start (http://localhost:5000)"], "problemMatcher": [] },
+
     { "label": "Live: watch sensor readings (batch 94)", "type": "shell",
       "command": "docker compose run --rm app python -m streaming.tail --batch 94",
       "presentation": { "panel": "dedicated", "group": "live" }, "problemMatcher": [] },
@@ -87,7 +104,7 @@
     { "label": "Run tests", "type": "shell", "group": { "kind": "test", "isDefault": true },
       "windows": { "command": ".venv\\Scripts\\python -m pytest -q" },
       "command": ".venv/bin/python -m pytest -q", "problemMatcher": [] },
-    { "label": "Stop stack (keep data)", "type": "shell", "command": "docker compose --profile airflow down", "problemMatcher": [] },
+    { "label": "Stop stack (keep data)", "type": "shell", "command": "docker compose --profile airflow --profile mlflow down", "problemMatcher": [] },
     { "label": "Reset stack (DELETES topics and bronze tables)", "type": "shell", "command": "docker compose --profile airflow down -v", "problemMatcher": [] }
   ]
 }

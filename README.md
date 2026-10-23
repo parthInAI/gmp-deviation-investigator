@@ -3,11 +3,14 @@
 [![ci](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml/badge.svg)](https://github.com/parthInAI/gmp-deviation-investigator/actions/workflows/ci.yml)
 ![Phase 1](https://img.shields.io/badge/phase_1-gate_passed-2ea043)
 ![Phase 2](https://img.shields.io/badge/phase_2-gate_passed-2ea043)
+![Phase 3](https://img.shields.io/badge/phase_3-gate_passed-2ea043)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 **Phase 1 results:** 100/100 batches and 113,935/113,935 readings in bronze, locally and on Databricks. [Evidence →](docs/phase1/RESULTS.md)
 
 **Phase 2 results:** 10 of 10 injected kinds of schema drift caught, 0 of 1,206 drifted records reached silver, and every bronze record is accounted for in silver or quarantine. [Evidence →](docs/phase2/RESULTS.md)
+
+**Phase 3 results:** on held-out batches, a frozen PCA monitor (Hotelling T² + SPE) caught 10 of 10 fault batches with 1 false-alarm batch out of 15 and a median delay of 2.2 h. Criteria were pre-registered and the test was scored once. [Evidence →](docs/phase3/RESULTS.md) · [Model card →](docs/phase3/MODEL_CARD.md)
 
 An agentic deviation-investigation assistant for biopharma manufacturing, built on a streaming lakehouse and designed against the **draft** EU GMP Annex 22 rules for AI.
 
@@ -21,11 +24,11 @@ It watches a simulated 100,000 L penicillin fermentation (IndPenSim) in near rea
 |---|---|---|---|
 | 1. Data foundation | 1–2 | All 100 batches replay into bronze | **Passed** on the real data, locally and on Databricks ([results](docs/phase1/RESULTS.md)) |
 | 2. Lakehouse and orchestration | 3–4 | Injected schema changes are caught | **Passed**: 10/10 drift scenarios caught on the real data, in CI and nightly in Airflow; silver/gold deployed to Databricks with Terraform ([results](docs/phase2/RESULTS.md)) |
-| 3. Detection model | 5–6 | Faults caught on held-out batches | Not started |
+| 3. Detection model | 5–6 | Faults caught on held-out batches | **Passed**: 10/10 fault batches, 1/15 false alarms, pre-registered and scored once ([results](docs/phase3/RESULTS.md)) |
 | 4. Agent team | 7–8 | Cited draft for all 10 fault batches | Not started |
 | 5. Review, deploy, evidence | 9–10 | Public repo and demo live | Not started |
 
-## Architecture (Phases 1–2)
+## Architecture (Phases 1–3)
 
 ```
 IndPenSim CSV ──► replayer ──► Redpanda (Kafka API) ──► Spark Structured Streaming ──► bronze Delta
@@ -38,6 +41,8 @@ openFDA API ────► recall producer ──► quality.fda_recall.v1 ─�
                                                          └─► alerts   (records per reason, per run)
                                                 gold.py ──► batch_summary · golden_profile · recall_summary
                                            reconcile.py ──► bronze = silver + duplicates + quarantine
+
+silver ──► models/ (Phase 3) ──► PCA T² + SPE monitor, frozen + hash-pinned, MLflow registry ──► alarm + the signals that drove it
 
 Airflow 3: gmpdi_lakehouse (hourly)  ·  gmpdi_drift_gate (nightly: 10 kinds of drift + 2 controls)
 Terraform: Databricks schema, volume, Git folder, job (infra/databricks)
@@ -115,6 +120,19 @@ unset GMPDI_TOPIC_SUFFIX
 
 **Databricks:** `lakehouse/databricks/silver_gold.py` runs the same silver/gold code on the Auto Loader bronze; `infra/databricks/` creates the schema, volume, Git folder and job with Terraform ([how](infra/databricks/README.md)).
 
+## Run Phase 3
+
+The detectors are already trained and frozen in `models/artifacts/` (SHA-256-pinned). Score the held-out test batches (needs silver from Phase 2):
+
+```bash
+docker compose build app                                     # adds CPU PyTorch and MLflow to the tools image
+docker compose run --rm app python -m models.evaluate --source /lakehouse/silver/process_sensor
+docker compose run --rm app python -m models.train --register-only   # log both detectors to MLflow
+docker compose --profile mlflow up -d mlflow                 # MLflow UI at http://localhost:5000
+```
+
+Retraining (`python -m models.train --source ...`) produces a new model version: re-test it against the same pre-registered criteria, never tune on the test batches.
+
 ## Working in VS Code
 
 Open `gmp-deviation-investigator.code-workspace`. Every step above is a task: Ctrl+Shift+P → **Tasks: Run Task**.
@@ -148,13 +166,14 @@ streaming/      replayer, openFDA producer, schema registry CLI, Avro schemas (s
 contracts/      data contracts: required fields, ranges, allowed values, formats
 lakehouse/      bronze.py, silver.py, gold.py (Spark), gate_check.py + reconcile.py (delta-rs), databricks/ notebooks
 drift/          schema-drift scenarios, injector and the Phase 2 gate check
+models/         Phase 3: features, PCA T² + SPE, LSTM autoencoder, frozen artifacts, train / evaluate
 orchestration/  Airflow DAGs and the Spark image entrypoint
 infra/          Terraform for the Databricks objects
-tests/          130 tests: unit, Spark (silver/gold parity with the Python reference), offline pipeline
+tests/          148 tests: unit, Spark (silver/gold parity with the Python reference), offline pipeline
 docs/           design notes (NOTES.md) and gate results (RESULTS.md) per phase
 ```
 
-Later phases add `models/`, `mcp_servers/`, `agents/`, `api/`, `ui/` and `evals/`, following the project plan.
+Later phases add `mcp_servers/`, `agents/`, `api/`, `ui/` and `evals/`, following the project plan.
 
 ## Data sources
 

@@ -101,12 +101,15 @@ services:
       SCHEMA_REGISTRY_URL: http://redpanda:8081
       OPENFDA_API_KEY: ${OPENFDA_API_KEY:-}
       GMPDI_TOPIC_SUFFIX: ${GMPDI_TOPIC_SUFFIX:-}
+      MLFLOW_TRACKING_URI: sqlite:///out/mlflow/mlflow.db
+      MLFLOW_DISABLE_AGENT_HINT: "1"
       PYTHONPATH: /app
     volumes:
       - ./streaming:/app/streaming:ro
       - ./lakehouse:/app/lakehouse:ro
       - ./contracts:/app/contracts:ro
       - ./drift:/app/drift:ro
+      - ./models:/app/models   # writable: training writes frozen artifacts here
       - ./tests/fixtures:/app/tests/fixtures:ro
       - ${RAW_DATA_DIR:-./data/raw}:/app/data/raw:ro
       - ./out:/app/out
@@ -147,6 +150,18 @@ services:
       <<: *spark-env
       JOB: gold.py
     command: []
+
+  # MLflow UI over the runs logged by models.train (out/mlflow).  http://localhost:5000
+  mlflow:
+    image: gmpdi-app:dev
+    profiles: ["mlflow"]
+    working_dir: /app
+    command: ["mlflow", "ui", "--backend-store-uri", "sqlite:///out/mlflow/mlflow.db", "--host", "0.0.0.0", "--port", "5000"]
+    volumes:
+      - ./out:/app/out
+      - ./models:/app/models:ro
+    ports:
+      - "5000:5000"
 
   # Airflow 3 (standalone: API server, scheduler, DAG processor, triggerer in one
   # container, SQLite metadata DB). Local orchestration only, not a production setup.

@@ -1,0 +1,1091 @@
+{
+  "gate": "Faults are caught on held-out batches",
+  "criteria": {
+    "fault_batches_detected_min": 8,
+    "of_fault_batches": 10,
+    "false_alarm_batches_max": 2,
+    "of_test_normal_batches": 15
+  },
+  "gating_model": "pca",
+  "passed": true,
+  "evaluated_at": "2026-10-23T22:22:51.226137+00:00",
+  "code_commit": "a5867d9",
+  "artifact_hashes": {
+    "pca": {
+      "config.json": "65d81e7fcad140ac33c6fe5e34239fb88ccebf820c42401d7ac332788dca6de1",
+      "pca.json": "bb414be7ac943edf7b22bd023cd31c240a33968d8b467c8d969d1683606bf607",
+      "profile.json": "f5711900bb3e41b1db79b6f45ed9eec8347b2a4eee6aceda34dc93ab1b793a2e"
+    },
+    "lstm_ae": {
+      "config.json": "446efa81d47f1f7a288d2c2a9acad41e4cf7252dc16f52e426330d870d65d982",
+      "lstm.pt": "bc9ca5aaf6a259bd8a534aadc499b7abf2ee082564a9e6867050878e15b23654",
+      "profile.json": "f5711900bb3e41b1db79b6f45ed9eec8347b2a4eee6aceda34dc93ab1b793a2e"
+    }
+  },
+  "results": {
+    "pca": {
+      "model": "pca",
+      "fault_batches": 10,
+      "fault_batches_detected": 10,
+      "normal_batches": 15,
+      "normal_batches_with_alarm": 1,
+      "fault_batches_alarm_before_onset": 0,
+      "false_alarm_batches": 1,
+      "median_delay_h": 2.1999999999999993,
+      "max_delay_h": 9.400000000000006,
+      "reading_auc": 0.9311644791368678,
+      "reliability": [
+        {
+          "band": "0-0.5",
+          "readings": 24882,
+          "fault_share": 0.010770838357045254
+        },
+        {
+          "band": "0.5-1",
+          "readings": 1267,
+          "fault_share": 0.09155485398579322
+        },
+        {
+          "band": "1-2",
+          "readings": 1176,
+          "fault_share": 0.5008503401360545
+        },
+        {
+          "band": "2-5",
+          "readings": 235,
+          "fault_share": 0.6936170212765957
+        },
+        {
+          "band": "5-inf",
+          "readings": 125,
+          "fault_share": 0.96
+        }
+      ],
+      "faults_starting_after_coverage": 0,
+      "per_batch": [
+        {
+          "batch_id": 5,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 6,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 8,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 11,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 30,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 32,
+          "fault_onset_h": null,
+          "first_alarm_h": 87.8,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": true,
+          "alarm_readings": 8
+        },
+        {
+          "batch_id": 35,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 42,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 50,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 57,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 71,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 79,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 81,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 85,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 88,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 91,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 87
+        },
+        {
+          "batch_id": 92,
+          "fault_onset_h": 80.0,
+          "first_alarm_h": 84.4,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 4.4,
+          "any_alarm": true,
+          "alarm_readings": 88
+        },
+        {
+          "batch_id": 93,
+          "fault_onset_h": 70.0,
+          "first_alarm_h": 76.6,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 6.6,
+          "any_alarm": true,
+          "alarm_readings": 72
+        },
+        {
+          "batch_id": 94,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 129
+        },
+        {
+          "batch_id": 95,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 118
+        },
+        {
+          "batch_id": 96,
+          "fault_onset_h": 70.0,
+          "first_alarm_h": 79.4,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 9.4,
+          "any_alarm": true,
+          "alarm_readings": 58
+        },
+        {
+          "batch_id": 97,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 56
+        },
+        {
+          "batch_id": 98,
+          "fault_onset_h": 80.0,
+          "first_alarm_h": 84.4,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 4.4,
+          "any_alarm": true,
+          "alarm_readings": 54
+        },
+        {
+          "batch_id": 99,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 54
+        },
+        {
+          "batch_id": 100,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.2,
+          "any_alarm": true,
+          "alarm_readings": 56
+        }
+      ],
+      "plot": "out/gate/phase3/fault_batches_pca.png",
+      "top_signals_at_alarm": {
+        "91": {
+          "oxygen_uptake_rate": 0.74,
+          "offgas_o2_pct": 0.64,
+          "sugar_feed_rate_lph": 0.57
+        },
+        "92": {
+          "ph": 0.9,
+          "acid_flow_rate_lph": 0.24,
+          "base_flow_rate_lph": 0.13
+        },
+        "93": {
+          "temperature_k": 0.99,
+          "cooling_water_flow_lph": 0.74,
+          "sugar_feed_rate_lph": 0.03
+        },
+        "94": {
+          "aeration_rate_lph": 2.25,
+          "offgas_co2_pct": 0.84,
+          "offgas_o2_pct": 0.7
+        },
+        "95": {
+          "oxygen_uptake_rate": 0.76,
+          "offgas_o2_pct": 0.65,
+          "sugar_feed_rate_lph": 0.57
+        },
+        "96": {
+          "temperature_k": 0.99,
+          "cooling_water_flow_lph": 0.82,
+          "generated_heat_kj": 0.1
+        },
+        "97": {
+          "sugar_feed_rate_lph": 0.6,
+          "oxygen_uptake_rate": 0.59,
+          "offgas_o2_pct": 0.5
+        },
+        "98": {
+          "ph": 0.94,
+          "acid_flow_rate_lph": 0.25,
+          "base_flow_rate_lph": 0.13
+        },
+        "99": {
+          "aeration_rate_lph": 2.11,
+          "offgas_co2_pct": 0.81,
+          "offgas_o2_pct": 0.57
+        },
+        "100": {
+          "aeration_rate_lph": 2.19,
+          "offgas_co2_pct": 0.73,
+          "offgas_o2_pct": 0.57
+        }
+      }
+    },
+    "lstm_ae": {
+      "model": "lstm_ae",
+      "fault_batches": 10,
+      "fault_batches_detected": 10,
+      "normal_batches": 15,
+      "normal_batches_with_alarm": 2,
+      "fault_batches_alarm_before_onset": 0,
+      "false_alarm_batches": 2,
+      "median_delay_h": 2.700000000000001,
+      "max_delay_h": 11.200000000000003,
+      "reading_auc": 0.9024389013178681,
+      "reliability": [
+        {
+          "band": "0-0.5",
+          "readings": 24715,
+          "fault_share": 0.013716366579000607
+        },
+        {
+          "band": "0.5-1",
+          "readings": 1448,
+          "fault_share": 0.04488950276243094
+        },
+        {
+          "band": "1-2",
+          "readings": 906,
+          "fault_share": 0.5033112582781457
+        },
+        {
+          "band": "2-5",
+          "readings": 460,
+          "fault_share": 0.6304347826086957
+        },
+        {
+          "band": "5-inf",
+          "readings": 156,
+          "fault_share": 0.6794871794871795
+        }
+      ],
+      "faults_starting_after_coverage": 0,
+      "per_batch": [
+        {
+          "batch_id": 5,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 6,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 8,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 11,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 30,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 32,
+          "fault_onset_h": null,
+          "first_alarm_h": 90.2,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": true,
+          "alarm_readings": 16
+        },
+        {
+          "batch_id": 35,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 42,
+          "fault_onset_h": null,
+          "first_alarm_h": 92.6,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": true,
+          "alarm_readings": 13
+        },
+        {
+          "batch_id": 50,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 57,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 71,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 79,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 81,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 85,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 88,
+          "fault_onset_h": null,
+          "first_alarm_h": null,
+          "alarm_before_onset": null,
+          "detected": null,
+          "delay_h": null,
+          "any_alarm": false,
+          "alarm_readings": 0
+        },
+        {
+          "batch_id": 91,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.6,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.6,
+          "any_alarm": true,
+          "alarm_readings": 195
+        },
+        {
+          "batch_id": 92,
+          "fault_onset_h": 80.0,
+          "first_alarm_h": 85.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 5.2,
+          "any_alarm": true,
+          "alarm_readings": 112
+        },
+        {
+          "batch_id": 93,
+          "fault_onset_h": 70.0,
+          "first_alarm_h": 78.6,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 8.6,
+          "any_alarm": true,
+          "alarm_readings": 83
+        },
+        {
+          "batch_id": 94,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.4,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.4,
+          "any_alarm": true,
+          "alarm_readings": 176
+        },
+        {
+          "batch_id": 95,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.6,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.6,
+          "any_alarm": true,
+          "alarm_readings": 178
+        },
+        {
+          "batch_id": 96,
+          "fault_onset_h": 70.0,
+          "first_alarm_h": 81.2,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 11.2,
+          "any_alarm": true,
+          "alarm_readings": 70
+        },
+        {
+          "batch_id": 97,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.8,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.8,
+          "any_alarm": true,
+          "alarm_readings": 124
+        },
+        {
+          "batch_id": 98,
+          "fault_onset_h": 80.0,
+          "first_alarm_h": 84.8,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 4.8,
+          "any_alarm": true,
+          "alarm_readings": 90
+        },
+        {
+          "batch_id": 99,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.6,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.6,
+          "any_alarm": true,
+          "alarm_readings": 93
+        },
+        {
+          "batch_id": 100,
+          "fault_onset_h": 20.0,
+          "first_alarm_h": 22.4,
+          "alarm_before_onset": false,
+          "detected": true,
+          "delay_h": 2.4,
+          "any_alarm": true,
+          "alarm_readings": 111
+        }
+      ],
+      "plot": "out/gate/phase3/fault_batches_lstm_ae.png"
+    }
+  },
+  "post_hoc_episodes": {
+    "note": "post-hoc analysis added after the gate run; does not change the pre-registered gate",
+    "grace_h": 2.0,
+    "models": {
+      "pca": {
+        "episodes": 21,
+        "episodes_in_coverage": 21,
+        "caught_in_coverage": 18,
+        "by_order": {
+          "1.0": {
+            "sum": 10,
+            "count": 10
+          },
+          "2.0": {
+            "sum": 8,
+            "count": 8
+          },
+          "3.0": {
+            "sum": 0,
+            "count": 3
+          }
+        },
+        "per_episode": [
+          {
+            "batch_id": 91.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 91.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 91.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 214.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 92.0,
+            "episode": 1.0,
+            "start_h": 80.0,
+            "end_h": 84.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.4
+          },
+          {
+            "batch_id": 92.0,
+            "episode": 2.0,
+            "start_h": 140.0,
+            "end_h": 160.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 93.0,
+            "episode": 1.0,
+            "start_h": 70.0,
+            "end_h": 90.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 6.6
+          },
+          {
+            "batch_id": 94.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 94.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.4
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 211.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 96.0,
+            "episode": 1.0,
+            "start_h": 70.0,
+            "end_h": 90.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 9.4
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 214.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 98.0,
+            "episode": 1.0,
+            "start_h": 80.0,
+            "end_h": 84.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.4
+          },
+          {
+            "batch_id": 98.0,
+            "episode": 2.0,
+            "start_h": 140.0,
+            "end_h": 160.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.8
+          },
+          {
+            "batch_id": 99.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 99.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 100.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          },
+          {
+            "batch_id": 100.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.2
+          }
+        ]
+      },
+      "lstm_ae": {
+        "episodes": 21,
+        "episodes_in_coverage": 21,
+        "caught_in_coverage": 18,
+        "by_order": {
+          "1.0": {
+            "sum": 10,
+            "count": 10
+          },
+          "2.0": {
+            "sum": 8,
+            "count": 8
+          },
+          "3.0": {
+            "sum": 0,
+            "count": 3
+          }
+        },
+        "per_episode": [
+          {
+            "batch_id": 91.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 91.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.0
+          },
+          {
+            "batch_id": 91.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 214.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 92.0,
+            "episode": 1.0,
+            "start_h": 80.0,
+            "end_h": 84.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 5.2
+          },
+          {
+            "batch_id": 92.0,
+            "episode": 2.0,
+            "start_h": 140.0,
+            "end_h": 160.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.0
+          },
+          {
+            "batch_id": 93.0,
+            "episode": 1.0,
+            "start_h": 70.0,
+            "end_h": 90.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 8.6
+          },
+          {
+            "batch_id": 94.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.4
+          },
+          {
+            "batch_id": 94.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.0
+          },
+          {
+            "batch_id": 95.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 211.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 96.0,
+            "episode": 1.0,
+            "start_h": 70.0,
+            "end_h": 90.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 11.2
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 30.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.8
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 2.0,
+            "start_h": 76.0,
+            "end_h": 92.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.0
+          },
+          {
+            "batch_id": 97.0,
+            "episode": 3.0,
+            "start_h": 200.0,
+            "end_h": 214.0,
+            "in_coverage": true,
+            "caught": false,
+            "delay_h": null
+          },
+          {
+            "batch_id": 98.0,
+            "episode": 1.0,
+            "start_h": 80.0,
+            "end_h": 84.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.8
+          },
+          {
+            "batch_id": 98.0,
+            "episode": 2.0,
+            "start_h": 140.0,
+            "end_h": 160.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 4.2
+          },
+          {
+            "batch_id": 99.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.6
+          },
+          {
+            "batch_id": 99.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.8
+          },
+          {
+            "batch_id": 100.0,
+            "episode": 1.0,
+            "start_h": 20.0,
+            "end_h": 24.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.4
+          },
+          {
+            "batch_id": 100.0,
+            "episode": 2.0,
+            "start_h": 100.0,
+            "end_h": 110.0,
+            "in_coverage": true,
+            "caught": true,
+            "delay_h": 2.8
+          }
+        ]
+      }
+    }
+  }
+}
