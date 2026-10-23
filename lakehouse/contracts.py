@@ -110,13 +110,24 @@ def approved_schema_ids(registry_url: str, subject: str, approved_avsc: list[Pat
     """Registry ids of every registered version of `subject` that matches an approved .avsc.
 
     Uses only the standard library, so it runs inside the plain Spark image.
+    The registry is an internal service: proxy settings from the environment
+    (Docker Desktop can inject the host's) are deliberately ignored.
     """
     import urllib.error
     import urllib.request
 
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
     def get(path):
-        with urllib.request.urlopen(f"{registry_url.rstrip('/')}{path}", timeout=15) as r:
-            return json.loads(r.read())
+        url = f"{registry_url.rstrip('/')}{path}"
+        try:
+            with opener.open(url, timeout=15) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                raise
+            body = e.read()[:300].decode("utf-8", "replace")
+            raise RuntimeError(f"schema registry GET {url} -> HTTP {e.code}: {body}") from e
 
     approved = [p.read_text() for p in approved_avsc]
     try:

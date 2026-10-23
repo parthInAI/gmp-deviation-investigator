@@ -133,16 +133,35 @@ def test_approved_schema_ids_only_returns_matching_versions(monkeypatch, tmp_pat
         "/subjects/s-value/versions/2": {"id": 9, "schema": json.dumps(drifted)},
     }
 
-    def fake_urlopen(url, timeout=None):
-        return _Resp(json.dumps(pages[url.replace("http://reg", "")]).encode())
+    class FakeOpener:
+        def open(self, url, timeout=None):
+            return _Resp(json.dumps(pages[url.replace("http://reg", "")]).encode())
 
-    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    monkeypatch.setattr("urllib.request.build_opener", lambda *handlers: FakeOpener())
     assert C.approved_schema_ids("http://reg", "s-value", [SCHEMAS / "sensor_reading.avsc"]) == {7}
 
 
 def test_approved_schema_ids_unknown_subject_is_empty(monkeypatch):
-    def not_found(url, timeout=None):
-        raise urllib.error.HTTPError(url, 404, "not found", {}, None)
+    class NotFound:
+        def open(self, url, timeout=None):
+            raise urllib.error.HTTPError(url, 404, "not found", {}, None)
 
-    monkeypatch.setattr("urllib.request.urlopen", not_found)
+    monkeypatch.setattr("urllib.request.build_opener", lambda *handlers: NotFound())
     assert C.approved_schema_ids("http://reg", "nope-value", [SCHEMAS / "sensor_reading.avsc"]) == set()
+
+
+def test_registry_errors_name_the_url_and_ignore_proxies(monkeypatch):
+    seen = {}
+
+    class Bad:
+        def open(self, url, timeout=None):
+            raise urllib.error.HTTPError(url, 400, "bad", {}, io.BytesIO(b'{"message":"nope"}'))
+
+    def build(*handlers):
+        seen["handlers"] = handlers
+        return Bad()
+
+    monkeypatch.setattr("urllib.request.build_opener", build)
+    with pytest.raises(RuntimeError, match=r"GET http://reg/subjects/s-value/versions -> HTTP 400.*nope"):
+        C.approved_schema_ids("http://reg", "s-value", [SCHEMAS / "sensor_reading.avsc"])
+    assert any(getattr(h, "proxies", None) == {} for h in seen["handlers"])  # environment proxies ignored

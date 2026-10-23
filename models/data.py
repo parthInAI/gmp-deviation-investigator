@@ -66,6 +66,9 @@ def load_readings(source: str | Path) -> pd.DataFrame:
     source: a silver Delta table directory, a .parquet cache, or the IndPenSim CSV.
     """
     source = Path(source)
+    if not source.exists():
+        hint = " (no silver table yet: run Phase 2 silver on the real data first)" if "silver" in str(source) else ""
+        raise FileNotFoundError(f"{source} not found{hint}")
     if source.is_dir():
         from deltalake import DeltaTable
 
