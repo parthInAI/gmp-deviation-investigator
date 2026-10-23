@@ -31,7 +31,7 @@ import numpy as np
 import pandas as pd
 
 from models import lstm_ae
-from models.alarms import alarms, batch_events
+from models.alarms import batch_events
 from models.data import MONITORED, load_readings, load_split, subset
 from models.detector import ARTIFACT_DIR, Detector
 from models.features import TimeProfile, smooth_causal
@@ -59,7 +59,8 @@ def synthetic_set(calib: pd.DataFrame, spread: pd.Series):
     out = []
     for s in scen:
         one = calib[calib["batch_id"] == s["batch_id"]]
-        out.append((s, inject(one, s["batch_id"], s["signal"], s["kind"], s["onset_h"], s["size"], spread[s["signal"]])))
+        faulty = inject(one, s["batch_id"], s["signal"], s["kind"], s["onset_h"], s["size"], spread[s["signal"]])
+        out.append((s, faulty))
     return out
 
 
@@ -82,8 +83,14 @@ def evaluate_calibration(det: Detector, calib: pd.DataFrame, syn) -> dict:
 
 def pick(results: list[dict]) -> dict:
     ok = [r for r in results if r["calib_false_alarm_batches"] <= MAX_CALIB_FALSE_ALARMS]
-    ok.sort(key=lambda r: (-r["synthetic_step_drift_detected"], -r["synthetic_2sd_detected"],
-                           r["calib_false_alarm_batches"], r["persistence"]))
+    ok.sort(
+        key=lambda r: (
+            -r["synthetic_step_drift_detected"],
+            -r["synthetic_2sd_detected"],
+            r["calib_false_alarm_batches"],
+            r["persistence"],
+        )
+    )
     if not ok:
         raise SystemExit("no setting meets the calibration false-alarm limit")
     return ok[0]
@@ -107,8 +114,10 @@ def main(argv=None) -> int:
     df = load_readings(args.source)
     train, calib = subset(df, split["train"]), subset(df, split["calibration"])
     assert not set(train.batch_id) & set(split["test_normal"] + split["test_fault"])
-    print(f"train {train.batch_id.nunique()} batches / {len(train)} readings; "
-          f"calibration {calib.batch_id.nunique()} batches / {len(calib)} readings (test batches not loaded)")
+    print(
+        f"train {train.batch_id.nunique()} batches / {len(train)} readings; "
+        f"calibration {calib.batch_id.nunique()} batches / {len(calib)} readings (test batches not loaded)"
+    )
 
     trs = smooth_causal(train, MONITORED, SMOOTH)
     profile = TimeProfile.fit(trs, MONITORED)
@@ -134,15 +143,38 @@ def main(argv=None) -> int:
             limits = {k: float(np.quantile(v, q)) for k, v in stats_tr_cache[var][1].items()}
             for pers in PCA_GRID["persistence"]:
                 det = Detector("pca", profile, limits, pers, SMOOTH, pca=pca)
-                r = {"variance": var, "components": pca.k, "quantile": q, "persistence": pers,
-                     **evaluate_calibration(det, calib, syn)}
+                r = {
+                    "variance": var,
+                    "components": pca.k,
+                    "quantile": q,
+                    "persistence": pers,
+                    **evaluate_calibration(det, calib, syn),
+                }
                 pca_results.append(r)
     best_pca = pick(pca_results)
     pca, st = stats_tr_cache[best_pca["variance"]]
-    pca_det = Detector("pca", profile, {k: float(np.quantile(v, best_pca["quantile"])) for k, v in st.items()},
-                       best_pca["persistence"], SMOOTH, pca=pca)
-    print("PCA chosen:", {k: best_pca[k] for k in ("variance", "components", "quantile", "persistence",
-                                                   "calib_false_alarm_batches", "synthetic_step_drift_detected")})
+    pca_det = Detector(
+        "pca",
+        profile,
+        {k: float(np.quantile(v, best_pca["quantile"])) for k, v in st.items()},
+        best_pca["persistence"],
+        SMOOTH,
+        pca=pca,
+    )
+    print(
+        "PCA chosen:",
+        {
+            k: best_pca[k]
+            for k in (
+                "variance",
+                "components",
+                "quantile",
+                "persistence",
+                "calib_false_alarm_batches",
+                "synthetic_step_drift_detected",
+            )
+        },
+    )
 
     # ---- LSTM autoencoder
     w, _ = lstm_ae.windows(train, ztr, WINDOW)
@@ -152,29 +184,55 @@ def main(argv=None) -> int:
     lstm_results = []
     for q in LSTM_GRID["quantile"]:
         for pers in LSTM_GRID["persistence"]:
-            det = Detector("lstm_ae", profile, {"recon": float(np.quantile(rec_tr, q))}, pers, SMOOTH,
-                           lstm=model, window=WINDOW, meta={"lstm": LSTM_PARAMS})
+            det = Detector(
+                "lstm_ae",
+                profile,
+                {"recon": float(np.quantile(rec_tr, q))},
+                pers,
+                SMOOTH,
+                lstm=model,
+                window=WINDOW,
+                meta={"lstm": LSTM_PARAMS},
+            )
             lstm_results.append({"quantile": q, "persistence": pers, **evaluate_calibration(det, calib, syn)})
     best_lstm = pick(lstm_results)
-    lstm_det = Detector("lstm_ae", profile, {"recon": float(np.quantile(rec_tr, best_lstm["quantile"]))},
-                        best_lstm["persistence"], SMOOTH, lstm=model, window=WINDOW, meta={"lstm": LSTM_PARAMS})
-    print("LSTM chosen:", {k: best_lstm[k] for k in ("quantile", "persistence", "calib_false_alarm_batches",
-                                                    "synthetic_step_drift_detected")})
+    lstm_det = Detector(
+        "lstm_ae",
+        profile,
+        {"recon": float(np.quantile(rec_tr, best_lstm["quantile"]))},
+        best_lstm["persistence"],
+        SMOOTH,
+        lstm=model,
+        window=WINDOW,
+        meta={"lstm": LSTM_PARAMS},
+    )
+    print(
+        "LSTM chosen:",
+        {
+            k: best_lstm[k]
+            for k in ("quantile", "persistence", "calib_false_alarm_batches", "synthetic_step_drift_detected")
+        },
+    )
 
-    gating = "lstm_ae" if (best_lstm["synthetic_step_drift_detected"]
-                           > best_pca["synthetic_step_drift_detected"] + LSTM_MARGIN) else "pca"
+    gating = (
+        "lstm_ae"
+        if (best_lstm["synthetic_step_drift_detected"] > best_pca["synthetic_step_drift_detected"] + LSTM_MARGIN)
+        else "pca"
+    )
 
     # ---- freeze
     manifests = {}
-    for name, det, best, grid in (("pca", pca_det, best_pca, pca_results),
-                                  ("lstm_ae", lstm_det, best_lstm, lstm_results)):
+    for name, det, best, grid in (
+        ("pca", pca_det, best_pca, pca_results),
+        ("lstm_ae", lstm_det, best_lstm, lstm_results),
+    ):
         det.meta = {**meta, "kind": name, "calibration": best, "lstm": LSTM_PARAMS if name == "lstm_ae" else None}
         manifests[name] = det.save(args.out / name)
         pd.DataFrame(grid).to_csv(args.out / name / "tuning_grid.csv", index=False)
     selection = {
         "gating_model": gating,
         "rule": f"PCA unless the LSTM beats it by more than {LSTM_MARGIN:.0%} on calibration synthetic "
-                "step/drift detection at <= 1 calibration false-alarm batch",
+        "step/drift detection at <= 1 calibration false-alarm batch",
         "pca_calibration": best_pca,
         "lstm_calibration": best_lstm,
         "selected_before_test": True,
@@ -184,8 +242,9 @@ def main(argv=None) -> int:
     print(f"gating model: {gating}. Frozen to {args.out} in {time.time() - t0:.0f}s")
 
     if not args.no_mlflow:
-        log_mlflow(args.tracking_uri, meta, {"pca": (pca_det, best_pca), "lstm_ae": (lstm_det, best_lstm)},
-                   args.out, gating)
+        log_mlflow(
+            args.tracking_uri, meta, {"pca": (pca_det, best_pca), "lstm_ae": (lstm_det, best_lstm)}, args.out, gating
+        )
     return 0
 
 
@@ -197,18 +256,36 @@ def log_mlflow(uri, meta, runs, out_dir, gating):
     if uri.startswith("sqlite:///"):
         Path(uri.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
     mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment("gmpdi-fault-detection")
+    name = "gmpdi-fault-detection"
+    if mlflow.get_experiment_by_name(name) is None:
+        # artifacts next to the tracking DB (git-ignored out/), not in ./mlruns
+        root = Path(uri.removeprefix("sqlite:///")).parent if uri.startswith("sqlite:///") else Path("out/mlflow")
+        mlflow.create_experiment(name, artifact_location=(root / "artifacts").resolve().as_uri())
+    mlflow.set_experiment(name)
     models_dir = Path(__file__).resolve().parent
     for name, (det, best) in runs.items():
         with mlflow.start_run(run_name=name) as run:
-            mlflow.set_tags({"phase": "3", "model_kind": name, "gating": str(name == gating),
-                             "train_fingerprint": meta["train_fingerprint"]})
+            mlflow.set_tags(
+                {
+                    "phase": "3",
+                    "model_kind": name,
+                    "gating": str(name == gating),
+                    "train_fingerprint": meta["train_fingerprint"],
+                }
+            )
             mlflow.log_params({k: v for k, v in best.items() if not k.startswith(("calib_", "synthetic_"))})
-            mlflow.log_params({"persistence": det.persistence, "smooth_window": det.smooth_window,
-                               "n_features": len(det.features), "coverage_h": meta["coverage_h"],
-                               "train_batches": len(meta["train_batches"])})
-            mlflow.log_metrics({k: v for k, v in best.items()
-                                if k.startswith(("calib_", "synthetic_")) and v is not None})
+            mlflow.log_params(
+                {
+                    "persistence": det.persistence,
+                    "smooth_window": det.smooth_window,
+                    "n_features": len(det.features),
+                    "coverage_h": meta["coverage_h"],
+                    "train_batches": len(meta["train_batches"]),
+                }
+            )
+            mlflow.log_metrics(
+                {k: v for k, v in best.items() if k.startswith(("calib_", "synthetic_")) and v is not None}
+            )
             mlflow.log_artifact(str(out_dir / name / "tuning_grid.csv"))
             info = mlflow.pyfunc.log_model(
                 name="detector",

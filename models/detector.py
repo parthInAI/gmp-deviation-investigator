@@ -107,8 +107,15 @@ class Detector:
                 raise RuntimeError(f"{directory / f}: SHA-256 does not match the manifest; refusing to load")
         config = json.loads((directory / "config.json").read_text())
         profile = TimeProfile.from_dict(json.loads((directory / "profile.json").read_text()))
-        det = cls(config["kind"], profile, config["limits"], config["persistence"], config["smooth_window"],
-                  window=config["window"], meta=manifest)
+        det = cls(
+            config["kind"],
+            profile,
+            config["limits"],
+            config["persistence"],
+            config["smooth_window"],
+            window=config["window"],
+            meta=manifest,
+        )
         if det.kind == "pca":
             det.pca = PCAMonitor.from_dict(json.loads((directory / "pca.json").read_text()))
         else:

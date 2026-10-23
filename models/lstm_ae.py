@@ -53,8 +53,17 @@ def windows(frame: pd.DataFrame, z: np.ndarray, window: int) -> tuple[np.ndarray
     return np.asarray(xs, dtype=np.float32), np.asarray(ends)
 
 
-def train(z_windows: np.ndarray, n_features: int, epochs: int = 8, hidden: int = 32, latent: int = 8,
-          lr: float = 1e-3, batch_size: int = 256, seed: int = 2026, log=print) -> LSTMAutoencoder:
+def train(
+    z_windows: np.ndarray,
+    n_features: int,
+    epochs: int = 8,
+    hidden: int = 32,
+    latent: int = 8,
+    lr: float = 1e-3,
+    batch_size: int = 256,
+    seed: int = 2026,
+    log=print,
+) -> LSTMAutoencoder:
     torch.manual_seed(seed)
     np.random.seed(seed)
     torch.set_num_threads(max(1, torch.get_num_threads()))
@@ -79,8 +88,9 @@ def train(z_windows: np.ndarray, n_features: int, epochs: int = 8, hidden: int =
 
 
 @torch.no_grad()
-def score(model: LSTMAutoencoder, frame: pd.DataFrame, z: np.ndarray, window: int,
-          batch_size: int = 2048) -> np.ndarray:
+def score(
+    model: LSTMAutoencoder, frame: pd.DataFrame, z: np.ndarray, window: int, batch_size: int = 2048
+) -> np.ndarray:
     """Per-reading score: reconstruction MSE of the window ending at that reading (0 before a full window)."""
     w, ends = windows(frame, z, window)
     out = np.zeros(len(frame))

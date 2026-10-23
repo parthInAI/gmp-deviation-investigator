@@ -40,9 +40,7 @@ def smooth_causal(df: pd.DataFrame, features, window: int = 5) -> pd.DataFrame:
     """
     out = df.copy()
     cols = list(features)
-    out[cols] = df.groupby("batch_id", sort=False)[cols].transform(
-        lambda s: s.rolling(window, min_periods=1).median()
-    )
+    out[cols] = df.groupby("batch_id", sort=False)[cols].transform(lambda s: s.rolling(window, min_periods=1).median())
     return out
 
 
@@ -103,5 +101,10 @@ class TimeProfile:
 
     @classmethod
     def from_dict(cls, d: dict) -> TimeProfile:
-        return cls(tuple(d["features"]), np.array(d["mean"]), np.array(d["std"]), np.array(d["support"]),
-                   int(d["last_reliable"]))
+        return cls(
+            tuple(d["features"]),
+            np.array(d["mean"]),
+            np.array(d["std"]),
+            np.array(d["support"]),
+            int(d["last_reliable"]),
+        )

@@ -75,9 +75,9 @@ def load_readings(source: str | Path) -> pd.DataFrame:
     else:
         from streaming import indpensim
 
-        df = pd.DataFrame(
-            [r for b, f in indpensim.iter_batches(source) for r in indpensim.to_records(b, f, "model")]
-        )[list(KEEP)]
+        df = pd.DataFrame([r for b, f in indpensim.iter_batches(source) for r in indpensim.to_records(b, f, "model")])[
+            list(KEEP)
+        ]
     df = df.sort_values(["batch_id", "seq"]).reset_index(drop=True)
     df["step"] = (df["time_h"] / STEP_H).round().astype(int)
     df["fault_ref"] = df["fault_ref"].fillna(0).astype(int)

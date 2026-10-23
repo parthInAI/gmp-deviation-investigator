@@ -24,7 +24,7 @@ spark = ["pyspark==4.0.1"]
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [tool.setuptools.packages.find]
-include = ["streaming*", "lakehouse*", "drift*"]
+include = ["streaming*", "lakehouse*", "drift*", "models*"]
 
 [tool.setuptools.package-data]
 streaming = ["schemas/*.avsc"]
