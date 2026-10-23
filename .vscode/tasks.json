@@ -81,6 +81,10 @@
                     "P3-2. Phase 3: per-episode detection (post-hoc)", "P3-3. Phase 3: log frozen detectors to MLflow",
                     "P3-4. MLflow UI: start (http://localhost:5000)"], "problemMatcher": [] },
 
+    { "label": "Repair schema registry (only if broken: error 40002)", "type": "shell",
+      "command": "docker compose run --rm app python -m streaming.registry repair --yes; docker compose restart redpanda; docker compose up -d --wait redpanda; docker compose run --rm app python -m streaming.registry register",
+      "problemMatcher": [] },
+
     { "label": "Live: watch sensor readings (batch 94)", "type": "shell",
       "command": "docker compose run --rm app python -m streaming.tail --batch 94",
       "presentation": { "panel": "dedicated", "group": "live" }, "problemMatcher": [] },

@@ -99,6 +99,7 @@ services:
     environment:
       KAFKA_BOOTSTRAP: redpanda:9092
       SCHEMA_REGISTRY_URL: http://redpanda:8081
+      REDPANDA_ADMIN_URL: http://redpanda:9644
       OPENFDA_API_KEY: ${OPENFDA_API_KEY:-}
       GMPDI_TOPIC_SUFFIX: ${GMPDI_TOPIC_SUFFIX:-}
       MLFLOW_TRACKING_URI: sqlite:///out/mlflow/mlflow.db
