@@ -1,0 +1,13 @@
+{
+  "kind": "lstm_ae",
+  "limits": {
+    "recon": 0.2641114169955275
+  },
+  "persistence": 10,
+  "smooth_window": 5,
+  "window": 24,
+  "lstm": {
+    "hidden": 32,
+    "latent": 8
+  }
+}

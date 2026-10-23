@@ -1,0 +1,11 @@
+{
+  "kind": "pca",
+  "limits": {
+    "t2": 92.39863052982186,
+    "spe": 38.06802680128091
+  },
+  "persistence": 10,
+  "smooth_window": 5,
+  "window": null,
+  "lstm": null
+}

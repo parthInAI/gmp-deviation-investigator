@@ -1,0 +1,39 @@
+{
+  "gating_model": "pca",
+  "rule": "PCA unless the LSTM beats it by more than 5% on calibration synthetic step/drift detection at <= 1 calibration false-alarm batch",
+  "pca_calibration": {
+    "variance": 0.9,
+    "components": 11,
+    "quantile": 0.995,
+    "persistence": 10,
+    "calib_false_alarm_batches": 1,
+    "synthetic_step_drift_detected": 0.7416666666666667,
+    "synthetic_stuck_detected": 0.21666666666666667,
+    "synthetic_2sd_detected": 0.4777777777777778,
+    "synthetic_4sd_detected": 0.6555555555555556,
+    "synthetic_median_delay_h": 7.299999999999997
+  },
+  "lstm_calibration": {
+    "quantile": 0.997,
+    "persistence": 10,
+    "calib_false_alarm_batches": 1,
+    "synthetic_step_drift_detected": 0.7666666666666667,
+    "synthetic_stuck_detected": 0.2,
+    "synthetic_2sd_detected": 0.4666666666666667,
+    "synthetic_4sd_detected": 0.6888888888888889,
+    "synthetic_median_delay_h": 7.400000000000006
+  },
+  "selected_before_test": true,
+  "manifests": {
+    "pca": {
+      "config.json": "65d81e7fcad140ac33c6fe5e34239fb88ccebf820c42401d7ac332788dca6de1",
+      "pca.json": "bb414be7ac943edf7b22bd023cd31c240a33968d8b467c8d969d1683606bf607",
+      "profile.json": "f5711900bb3e41b1db79b6f45ed9eec8347b2a4eee6aceda34dc93ab1b793a2e"
+    },
+    "lstm_ae": {
+      "config.json": "446efa81d47f1f7a288d2c2a9acad41e4cf7252dc16f52e426330d870d65d982",
+      "lstm.pt": "bc9ca5aaf6a259bd8a534aadc499b7abf2ee082564a9e6867050878e15b23654",
+      "profile.json": "f5711900bb3e41b1db79b6f45ed9eec8347b2a4eee6aceda34dc93ab1b793a2e"
+    }
+  }
+}
