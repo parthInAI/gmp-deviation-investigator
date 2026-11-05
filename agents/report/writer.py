@@ -79,3 +79,65 @@ async def review(pack: str, draft: Report, callbacks) -> Review:
         ("user", f"Evidence pack:\n{pack}\n\nDraft report:\n{draft.model_dump_json(indent=1)}"),
     ]
     return await llm.ainvoke(msgs, config={"callbacks": callbacks})
+
+
+# ---------------------------------------------------------------- no-LLM baseline
+
+SUBSYSTEM_CATEGORY = {
+    "air supply (aeration)": "aeration_supply",
+    "sugar feed system": "substrate_feed",
+    "pH measurement and control": "ph_measurement",
+    "temperature control and cooling": "coolant_supply",
+    "vessel pressure": "vessel_pressure",
+    "PAA precursor feed": "precursor_feed",
+    "oil feed": "oil_feed",
+}
+
+
+async def rules_write(pack: str, feedback: str | None, callbacks) -> Report:
+    """Baseline without an LLM: suspected subsystems become ranked hypotheses, cited with the analyst's evidence."""
+    from agents.schemas import Claim, Hypothesis
+
+    p = json.loads(pack)
+    tl = [Claim(**c) for c in p["process_findings"]["timeline"]]
+    hyps = []
+    for i, sub in enumerate(p["process_findings"]["suspected_subsystems"][:3]):
+        cat = SUBSYSTEM_CATEGORY.get(sub, "other")
+        ev = [c for c in tl if any(sig in " ".join(c.citations) for sig in _signals_for(cat))] or tl[:1]
+        hyps.append(
+            Hypothesis(
+                rank=i + 1,
+                category=cat,
+                statement=f"Fault in {sub}",
+                evidence_for=ev[:2],
+                to_confirm="Check the equipment records for this subsystem.",
+            )
+        )
+    regs = [Claim(text=r["text"][:200], citations=[r["id"]]) for r in p["regulations"][:2]]
+    cases = [
+        Claim(text=f"{c['deviation_id']}: {c['root_cause']}", citations=[c["deviation_id"]])
+        for c in p["similar_deviations"][:2]
+    ]
+    return Report(
+        batch_id=p["batch_id"],
+        title=f"Batch {p['batch_id']} deviation (rules baseline)",
+        event=tl[:1],
+        evidence=tl,
+        hypotheses=hyps,
+        product_impact=[],
+        capa=[],
+        regulatory_basis=regs,
+        similar_cases=cases,
+    )
+
+
+def _signals_for(category: str) -> list[str]:
+    return {
+        "aeration_supply": ["aeration_rate"],
+        "substrate_feed": ["sugar_feed"],
+        "ph_measurement": [":ph:", "base_flow", "acid_flow"],
+        "coolant_supply": ["temperature", "cooling_water"],
+        "vessel_pressure": ["air_head_pressure"],
+        "precursor_feed": ["paa_flow"],
+        "oil_feed": ["oil_flow"],
+    }.get(category, [])

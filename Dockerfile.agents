@@ -1,0 +1,21 @@
+# Phase 4 image: MCP servers (historian, QMS), regulatory retrieval, the LangGraph lead and the evals.
+# The embedding model is downloaded at build time, so runs need no network for embeddings.
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PYTHONPATH=/app \
+    FASTEMBED_CACHE=/opt/fastembed
+WORKDIR /app
+
+COPY requirements-agents.txt ./
+RUN pip install -r requirements-agents.txt \
+ && python -c "from fastembed import TextEmbedding; TextEmbedding('BAAI/bge-small-en-v1.5', cache_dir='/opt/fastembed')"
+
+COPY models ./models
+COPY mcp_servers ./mcp_servers
+COPY regulatory ./regulatory
+COPY qms ./qms
+COPY evals ./evals
+COPY agents ./agents
+COPY tests ./tests
+
+CMD ["python", "-m", "agents.run", "--help"]

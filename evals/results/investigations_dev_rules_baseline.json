@@ -1,0 +1,445 @@
+{
+  "split": "dev",
+  "analyst": "rules",
+  "evaluated_at": "2026-11-05T21:52:51.903754+00:00",
+  "usd_to_eur": 0.92,
+  "rate_source": "fallback GMPDI_USD_EUR (ECB unavailable: <urlopen error [Errno -2] Name or service not known>)",
+  "root_cause_top3": 12,
+  "root_cause_top3_strict": 12,
+  "root_cause_top1": 12,
+  "fault_investigations": 14,
+  "citation_validity": 1.0,
+  "claims": 153,
+  "stopped_for_approval": 14,
+  "max_cost_eur": 0.0,
+  "mean_cost_eur": 0.0,
+  "mean_seconds": 0.7,
+  "errors": [],
+  "per_batch": [
+    {
+      "batch_id": 1001,
+      "thread": "batch-1001-9df44f4c",
+      "expected": [
+        "aeration_supply"
+      ],
+      "categories": [
+        "aeration_supply",
+        "coolant_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 13,
+        "valid_claims": 13,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 3.9
+    },
+    {
+      "batch_id": 1002,
+      "thread": "batch-1002-a71a2399",
+      "expected": [
+        "substrate_feed"
+      ],
+      "categories": [
+        "substrate_feed",
+        "aeration_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 11,
+        "valid_claims": 11,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1003,
+      "thread": "batch-1003-766f4f78",
+      "expected": [
+        "ph_measurement",
+        "ph_dosing"
+      ],
+      "categories": [
+        "ph_measurement",
+        "coolant_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 12,
+        "valid_claims": 12,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.6
+    },
+    {
+      "batch_id": 1004,
+      "thread": "batch-1004-f5a9a8b8",
+      "expected": [
+        "coolant_supply",
+        "temperature_measurement"
+      ],
+      "categories": [
+        "coolant_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 9,
+        "valid_claims": 9,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1005,
+      "thread": "batch-1005-215d6870",
+      "expected": [
+        "agitation"
+      ],
+      "categories": [],
+      "top3": false,
+      "top3_strict": false,
+      "top1": false,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 9,
+        "valid_claims": 9,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1006,
+      "thread": "batch-1006-c89e600a",
+      "expected": [
+        "vessel_pressure"
+      ],
+      "categories": [
+        "vessel_pressure",
+        "substrate_feed",
+        "oil_feed"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 11,
+        "valid_claims": 11,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.6
+    },
+    {
+      "batch_id": 1007,
+      "thread": "batch-1007-9c37b2ce",
+      "expected": [
+        "precursor_feed"
+      ],
+      "categories": [
+        "precursor_feed",
+        "ph_measurement"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 10,
+        "valid_claims": 10,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1008,
+      "thread": "batch-1008-f9de1f9e",
+      "expected": [
+        "aeration_supply"
+      ],
+      "categories": [
+        "aeration_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 12,
+        "valid_claims": 12,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.6
+    },
+    {
+      "batch_id": 1009,
+      "thread": "batch-1009-f26e345c",
+      "expected": [
+        "substrate_feed"
+      ],
+      "categories": [
+        "substrate_feed",
+        "ph_measurement"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 14,
+        "valid_claims": 14,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1010,
+      "thread": "batch-1010-61576b86",
+      "expected": [
+        "ph_measurement",
+        "ph_dosing"
+      ],
+      "categories": [
+        "ph_measurement"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 11,
+        "valid_claims": 11,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1011,
+      "thread": "batch-1011-9d5bd242",
+      "expected": [
+        "coolant_supply",
+        "temperature_measurement"
+      ],
+      "categories": [
+        "coolant_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 9,
+        "valid_claims": 9,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1012,
+      "thread": "batch-1012-b4be214f",
+      "expected": [
+        "agitation"
+      ],
+      "categories": [
+        "ph_measurement",
+        "precursor_feed"
+      ],
+      "top3": false,
+      "top3_strict": false,
+      "top1": false,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 13,
+        "valid_claims": 13,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.6
+    },
+    {
+      "batch_id": 1013,
+      "thread": "batch-1013-3ec1ec71",
+      "expected": [
+        "vessel_pressure"
+      ],
+      "categories": [
+        "vessel_pressure",
+        "coolant_supply"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 10,
+        "valid_claims": 10,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1014,
+      "thread": "batch-1014-96ce7e66",
+      "expected": [
+        "precursor_feed"
+      ],
+      "categories": [
+        "precursor_feed"
+      ],
+      "top3": true,
+      "top3_strict": true,
+      "top1": true,
+      "status": "awaiting_approval",
+      "error": null,
+      "stopped_for_approval": true,
+      "citations": {
+        "claims": 9,
+        "valid_claims": 9,
+        "invalid": []
+      },
+      "draft_validity": [
+        1.0
+      ],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.5
+    },
+    {
+      "batch_id": 1015,
+      "thread": "batch-1015-a43daec8",
+      "expected": [],
+      "categories": [],
+      "top3": false,
+      "top3_strict": false,
+      "top1": false,
+      "status": "no_alarm",
+      "error": null,
+      "stopped_for_approval": false,
+      "citations": {
+        "claims": 0,
+        "valid_claims": 0,
+        "invalid": []
+      },
+      "draft_validity": [],
+      "claims_stripped": 0,
+      "revisions": 0,
+      "cost_eur": 0.0,
+      "seconds": 0.1
+    }
+  ]
+}

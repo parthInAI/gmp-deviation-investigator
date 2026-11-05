@@ -14,6 +14,43 @@ name: gmpdi
 # Shared by the three Spark services. JOB picks the script (see
 # orchestration/spark-job.sh); extra arguments after the service name go to the
 # script, e.g. `docker compose run --rm spark --trigger continuous`.
+# Phase 4 agents image (Dockerfile.agents): MCP servers, regulatory retrieval, LangGraph lead, evals.
+# API keys come only from your local .env (never committed). Start the services with:
+#   docker compose --profile agents up -d --wait postgres historian historian-dev qms case-historian
+x-agents: &agents
+  build:
+    context: .
+    dockerfile: Dockerfile.agents
+  image: gmpdi-agents:dev
+  profiles: ["agents"]
+  working_dir: /app
+  environment: &agents-env
+    PYTHONPATH: /app
+    HISTORIAN_SOURCE: /lakehouse/silver/process_sensor
+    HISTORIAN_MCP_URL: http://historian:8101/mcp
+    QMS_MCP_URL: http://qms:8102/mcp
+    CASE_HISTORIAN_A2A_URL: http://case-historian:8103
+    REGULATION_STORE: pgvector
+    PGHOST: postgres
+    PGUSER: gmpdi
+    PGPASSWORD: gmpdi
+    PGDATABASE: gmpdi
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+    LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+    LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+    LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-gmpdi-phase4}
+    GMPDI_AUDIT_KEY: ${GMPDI_AUDIT_KEY:-}
+  volumes:  # code is baked into the image; mounts let you edit without rebuilding
+    - ./agents:/app/agents:ro
+    - ./mcp_servers:/app/mcp_servers:ro
+    - ./evals:/app/evals
+    - ./regulatory:/app/regulatory:ro
+    - ./qms:/app/qms:ro
+    - ./models:/app/models:ro
+    - ./out:/app/out
+    - lakehouse:/lakehouse:ro
+
 x-spark: &spark
   build:
     context: .
@@ -195,8 +232,95 @@ services:
       redpanda:
         condition: service_healthy
 
+  # ---- Phase 4: agents (profile "agents") -------------------------------------
+  postgres:  # pgvector store for regulations (and, in Phase 5, the audit log)
+    image: pgvector/pgvector:0.8.0-pg17
+    profiles: ["agents"]
+    environment:
+      POSTGRES_USER: gmpdi
+      POSTGRES_PASSWORD: gmpdi
+      POSTGRES_DB: gmpdi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gmpdi"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  historian:  # MCP server over the real silver table (read-only)
+    <<: *agents
+    command: ["python", "-m", "mcp_servers.historian.server"]
+    environment:
+      <<: *agents-env
+      MCP_PORT: "8101"
+    ports:
+      - "8101:8101"
+    healthcheck: &tcp-health
+      test: ["CMD", "python", "-c", "import socket,os; socket.create_connection(('localhost', int(os.environ['MCP_PORT'])), 2)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  historian-dev:  # the same server over the development faults (out/dev_cases.parquet), never the test batches
+    <<: *agents
+    command: ["python", "-m", "mcp_servers.historian.server"]
+    environment:
+      <<: *agents-env
+      MCP_PORT: "8111"
+      HISTORIAN_SOURCE: /app/out/dev_cases.parquet
+    ports:
+      - "8111:8111"
+    healthcheck: *tcp-health
+
+  qms:  # MCP server over the synthetic SOPs and deviations (read-only)
+    <<: *agents
+    command: ["python", "-m", "mcp_servers.qms.server"]
+    environment:
+      <<: *agents-env
+      MCP_PORT: "8102"
+    ports:
+      - "8102:8102"
+    healthcheck: *tcp-health
+
+  case-historian:  # CrewAI agent behind A2A (own image: CrewAI pins its own dependencies)
+    build:
+      context: .
+      dockerfile: Dockerfile.crew
+    image: gmpdi-crew:dev
+    profiles: ["agents"]
+    environment:
+      PYTHONPATH: /app
+      QMS_MCP_URL: http://qms:8102/mcp
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CASE_HISTORIAN_MODE: ${CASE_HISTORIAN_MODE:-crew}
+      CASE_HISTORIAN_PUBLIC_URL: http://case-historian:8103
+      A2A_PORT: "8103"
+    volumes:
+      - ./agents/case_history:/app/agents/case_history:ro
+    ports:
+      - "8103:8103"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8103/.well-known/agent-card.json', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    depends_on:
+      qms:
+        condition: service_healthy
+
+  agents:  # one-off runner: docker compose --profile agents run --rm agents python -m agents.run investigate --batch 94
+    <<: *agents
+    command: ["python", "-m", "agents.run", "--help"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   redpanda-data:
   lakehouse:     # Delta tables live here, not in your (OneDrive-synced) project folder
   pipeline-out:  # manifests and reports written by Airflow-run tasks
   airflow-home:  # Airflow metadata DB (SQLite) and logs
+  pgdata:        # Phase 4 Postgres (pgvector)

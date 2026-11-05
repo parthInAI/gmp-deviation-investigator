@@ -1,0 +1,6 @@
+# Case historian image (Dockerfile.crew). CrewAI pins its own pydantic, so it lives in its own container
+# and talks to the lead over A2A.
+crewai[anthropic]==1.15.35
+a2a-sdk[http-server]==1.3.0
+mcp==1.30.0
+uvicorn==0.54.0

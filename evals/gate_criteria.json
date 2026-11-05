@@ -58,12 +58,13 @@
     "root cause top-1, and top-3 under the strict key (one category per batch)",
     "time per investigation",
     "claims the reviewer removed or sent back, per report",
-    "regulation recall@1 and recall@5 on the dev questions"
+    "regulation recall@1 and recall@5 on the dev questions",
+    "the no-LLM rules baseline (agents.run --analyst rules) on the same 10 batches, scored the same way, run in the same session as the gate (added 2026-11-05, before any test batch was investigated)"
   ],
   "models": {
     "agents": "Anthropic Claude (exact model ids frozen in agents/config.py before the test run)",
     "reviewer": "Mistral (a different vendor from the writer; exact id frozen with the agents)",
     "embeddings": "a local open embedding model (no API), frozen with retrieval settings"
   },
-  "honesty": "With 14 categories and at most 2 accepted per batch, guessing 3 at random would get about 3 of the 10 batches (expected 2.9), well below the bar of 7. The agents also see the detector's top contributing signals, so this gate tests that the investigation turns correct evidence into the right ranked root cause and cites it; it does not test detection again."
+  "honesty": "With 14 categories and at most 2 accepted per batch, guessing 3 at random would get about 3 of the 10 batches (expected 2.9), well below the bar of 7. The agents also see the detector's top contributing signals, so this gate tests that the investigation turns correct evidence into the right ranked root cause and cites it; it does not test detection again. Each of the four test fault types shows as one manipulated input far from its recipe, so a rules baseline is expected to do well on root cause; on the development faults it scored 12/14, missing only the agitation faults that no online signal shows directly. The gate result is reported next to the baseline so the LLMs' contribution is visible, not assumed."
 }

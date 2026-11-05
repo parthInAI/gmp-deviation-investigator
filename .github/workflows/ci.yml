@@ -22,6 +22,25 @@ jobs:
       - run: ruff check .
       - run: pytest -q
 
+  # Phase 4 agents with scripted models (no API keys in CI): citations enforced, stop for a human,
+  # audit trail, A2A contract, MCP servers, retrieval dev recall, both images build.
+  agents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-agents.txt && pip install -e . --no-deps
+      - name: Phase 4 tests
+        env:
+          FASTEMBED_CACHE: /tmp/fastembed
+        run: >
+          pytest -q tests/test_phase4_key.py tests/test_regulatory_corpus.py tests/test_qms_content.py
+          tests/test_mcp_servers.py tests/test_retrieval.py tests/test_agents_graph.py tests/test_case_historian_a2a.py
+      - name: Agent images build
+        run: docker compose --profile agents build agents case-historian
+
   # Static checks for the orchestration and infrastructure code.
   infra:
     runs-on: ubuntu-latest
