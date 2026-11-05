@@ -1,0 +1,69 @@
+{
+  "phase": 4,
+  "gate": "The agents draft a correct, cited investigation and stop for a human",
+  "registered_on": "2026-11-05",
+  "registered_before_any_agent_code_existed": true,
+  "test_set": {
+    "investigations": "fault batches 91-100, one investigation each, started from the frozen Phase 3 detector's first alarm (models/artifacts/pca, gmpdi-fault-detector v1)",
+    "answer_key": "evals/answer_key.json, derived by evals/answer_key.py from raw signals only (no model) and committed with this file",
+    "regulation_questions": "evals/regulation_questions.json, the 50 questions marked split=test; committed before retrieval is built",
+    "runs": "each test item is run once, after prompts, models and retrieval settings are frozen and committed; no reruns to improve a score"
+  },
+  "development_only_on": {
+    "investigations": "synthetic faults injected into calibration batches (models/synthetic.py) and normal batches; never batches 91-100",
+    "retrieval": "the 15 regulation questions marked split=dev"
+  },
+  "root_cause_taxonomy": [
+    "aeration_supply",
+    "agitation",
+    "substrate_feed",
+    "ph_measurement",
+    "ph_dosing",
+    "coolant_supply",
+    "temperature_measurement",
+    "vessel_pressure",
+    "precursor_feed",
+    "oil_feed",
+    "contamination",
+    "raw_material",
+    "operator_error",
+    "other"
+  ],
+  "criteria": {
+    "root_cause_top3": {
+      "rule": "the report's ranked hypotheses (each tagged with one taxonomy category) contain an accepted category for the batch within the first 3",
+      "pass_if_at_least": 7,
+      "out_of": 10
+    },
+    "citation_validity": {
+      "rule": "share of claims in the final (post-review) report whose every citation resolves: a sensor citation names a signal and time window that exist in that batch and the cited signal is outside its normal band somewhere in that window; a regulation or case citation names a source id that was retrieved during that run",
+      "pass_if_at_least": 0.95,
+      "pooled_over": "all claims in the 10 reports"
+    },
+    "regulation_recall_at_5": {
+      "rule": "the expected clause is among the regulatory analyst's top 5 retrieved chunks",
+      "pass_if_at_least": 0.8,
+      "over": "50 test questions"
+    },
+    "stops_for_human_approval": {
+      "rule": "every investigation ends in state awaiting_approval with no report released, and releasing without a named reviewer's decision is refused (tested)",
+      "pass_if": "10 of 10, and the refusal test passes"
+    },
+    "cost_per_investigation": {
+      "rule": "LLM cost from token counts (LangSmith traces) at the providers' published per-token prices, converted at the ECB EUR/USD reference rate on the run date",
+      "pass_if_every_run_at_most_eur": 0.5
+    }
+  },
+  "reported_not_gated": [
+    "root cause top-1, and top-3 under the strict key (one category per batch)",
+    "time per investigation",
+    "claims the reviewer removed or sent back, per report",
+    "regulation recall@1 and recall@5 on the dev questions"
+  ],
+  "models": {
+    "agents": "Anthropic Claude (exact model ids frozen in agents/config.py before the test run)",
+    "reviewer": "Mistral (a different vendor from the writer; exact id frozen with the agents)",
+    "embeddings": "a local open embedding model (no API), frozen with retrieval settings"
+  },
+  "honesty": "With 14 categories and at most 2 accepted per batch, guessing 3 at random would get about 3 of the 10 batches (expected 2.9), well below the bar of 7. The agents also see the detector's top contributing signals, so this gate tests that the investigation turns correct evidence into the right ranked root cause and cites it; it does not test detection again."
+}

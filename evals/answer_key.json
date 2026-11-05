@@ -1,0 +1,498 @@
+{
+  "derived_by": "evals/answer_key.py (raw signals vs training-batch recipe; no model involved)",
+  "source_of_fault_types": "Goldrick et al. 2019, Computers & Chemical Engineering 130, 106471",
+  "batches": {
+    "91": {
+      "fault_type": "substrate feed fault",
+      "accepted_categories": [
+        "substrate_feed"
+      ],
+      "strict_category": "substrate_feed",
+      "evidence_variable": "sugar_feed_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 30.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 4.15
+            },
+            {
+              "signal": "ph",
+              "mean_abs_z": 2.02
+            }
+          ]
+        },
+        {
+          "start_h": 76.0,
+          "end_h": 92.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "heating_water_flow_lph",
+              "mean_abs_z": 1.38
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.09
+            }
+          ]
+        },
+        {
+          "start_h": 200.0,
+          "end_h": 214.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 4.27
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.34
+            },
+            {
+              "signal": "temperature_k",
+              "mean_abs_z": 1.34
+            }
+          ]
+        }
+      ]
+    },
+    "92": {
+      "fault_type": "pH sensor drift",
+      "accepted_categories": [
+        "ph_measurement",
+        "ph_dosing"
+      ],
+      "strict_category": "ph_measurement",
+      "evidence_variable": "ph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 80.0,
+          "end_h": 84.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "ph",
+              "mean_abs_z": 7.81
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 2.13
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 0.69
+            }
+          ]
+        },
+        {
+          "start_h": 140.0,
+          "end_h": 160.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "ph",
+              "mean_abs_z": 9.91
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.33
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 0.73
+            }
+          ]
+        }
+      ]
+    },
+    "93": {
+      "fault_type": "coolant fault (temperature shift)",
+      "accepted_categories": [
+        "coolant_supply",
+        "temperature_measurement"
+      ],
+      "strict_category": "coolant_supply",
+      "evidence_variable": "temperature_k",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 70.0,
+          "end_h": 90.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "temperature_k",
+              "mean_abs_z": 8.55
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.37
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.17
+            }
+          ]
+        }
+      ]
+    },
+    "94": {
+      "fault_type": "aeration fault",
+      "accepted_categories": [
+        "aeration_supply"
+      ],
+      "strict_category": "aeration_supply",
+      "evidence_variable": "aeration_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 24.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 2.16
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 2.0
+            }
+          ]
+        },
+        {
+          "start_h": 100.0,
+          "end_h": 110.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "heating_water_flow_lph",
+              "mean_abs_z": 4.48
+            },
+            {
+              "signal": "acid_flow_rate_lph",
+              "mean_abs_z": 2.95
+            }
+          ]
+        }
+      ]
+    },
+    "95": {
+      "fault_type": "substrate feed fault",
+      "accepted_categories": [
+        "substrate_feed"
+      ],
+      "strict_category": "substrate_feed",
+      "evidence_variable": "sugar_feed_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 30.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 3.86
+            },
+            {
+              "signal": "ph",
+              "mean_abs_z": 1.73
+            }
+          ]
+        },
+        {
+          "start_h": 76.0,
+          "end_h": 92.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.54
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.1
+            }
+          ]
+        },
+        {
+          "start_h": 200.0,
+          "end_h": 211.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 4.27
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.71
+            },
+            {
+              "signal": "temperature_k",
+              "mean_abs_z": 1.63
+            }
+          ]
+        }
+      ]
+    },
+    "96": {
+      "fault_type": "coolant fault (temperature shift)",
+      "accepted_categories": [
+        "coolant_supply",
+        "temperature_measurement"
+      ],
+      "strict_category": "coolant_supply",
+      "evidence_variable": "temperature_k",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 70.0,
+          "end_h": 90.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "temperature_k",
+              "mean_abs_z": 6.79
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.17
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    "97": {
+      "fault_type": "substrate feed fault",
+      "accepted_categories": [
+        "substrate_feed"
+      ],
+      "strict_category": "substrate_feed",
+      "evidence_variable": "sugar_feed_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 30.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 3.95
+            },
+            {
+              "signal": "ph",
+              "mean_abs_z": 1.83
+            }
+          ]
+        },
+        {
+          "start_h": 76.0,
+          "end_h": 92.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.1
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.1
+            }
+          ]
+        },
+        {
+          "start_h": 200.0,
+          "end_h": 214.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 4.27
+            },
+            {
+              "signal": "paa_flow_lph",
+              "mean_abs_z": 1.03
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 0.96
+            }
+          ]
+        }
+      ]
+    },
+    "98": {
+      "fault_type": "pH sensor drift",
+      "accepted_categories": [
+        "ph_measurement",
+        "ph_dosing"
+      ],
+      "strict_category": "ph_measurement",
+      "evidence_variable": "ph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 80.0,
+          "end_h": 84.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "ph",
+              "mean_abs_z": 8.03
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 2.13
+            },
+            {
+              "signal": "temperature_k",
+              "mean_abs_z": 1.0
+            }
+          ]
+        },
+        {
+          "start_h": 140.0,
+          "end_h": 160.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "ph",
+              "mean_abs_z": 9.89
+            },
+            {
+              "signal": "base_flow_rate_lph",
+              "mean_abs_z": 1.33
+            },
+            {
+              "signal": "heating_water_flow_lph",
+              "mean_abs_z": 0.73
+            }
+          ]
+        }
+      ]
+    },
+    "99": {
+      "fault_type": "aeration fault",
+      "accepted_categories": [
+        "aeration_supply"
+      ],
+      "strict_category": "aeration_supply",
+      "evidence_variable": "aeration_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 24.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 2.16
+            },
+            {
+              "signal": "cooling_water_flow_lph",
+              "mean_abs_z": 1.85
+            }
+          ]
+        },
+        {
+          "start_h": 100.0,
+          "end_h": 110.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "heating_water_flow_lph",
+              "mean_abs_z": 4.18
+            },
+            {
+              "signal": "acid_flow_rate_lph",
+              "mean_abs_z": 2.75
+            }
+          ]
+        }
+      ]
+    },
+    "100": {
+      "fault_type": "aeration fault",
+      "accepted_categories": [
+        "aeration_supply"
+      ],
+      "strict_category": "aeration_supply",
+      "evidence_variable": "aeration_rate_lph",
+      "consistent_across_episodes": true,
+      "episodes": [
+        {
+          "start_h": 20.0,
+          "end_h": 24.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "sugar_feed_rate_lph",
+              "mean_abs_z": 2.16
+            },
+            {
+              "signal": "ph",
+              "mean_abs_z": 1.6
+            }
+          ]
+        },
+        {
+          "start_h": 100.0,
+          "end_h": 110.0,
+          "furthest_from_recipe": [
+            {
+              "signal": "aeration_rate_lph",
+              "mean_abs_z": 10.0
+            },
+            {
+              "signal": "heating_water_flow_lph",
+              "mean_abs_z": 4.5
+            },
+            {
+              "signal": "acid_flow_rate_lph",
+              "mean_abs_z": 2.75
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
