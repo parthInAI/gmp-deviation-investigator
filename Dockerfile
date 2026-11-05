@@ -26,6 +26,7 @@ COPY drift ./drift
 COPY models ./models
 COPY regulatory ./regulatory
 COPY evals ./evals
+COPY qms ./qms
 COPY tests/fixtures ./tests/fixtures
 
 CMD ["python", "-m", "streaming.replayer", "--help"]
