@@ -25,10 +25,11 @@ models = ["torch>=2.4", "mlflow>=3.0,<4", "matplotlib>=3.8"]  # torch: install t
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [tool.setuptools.packages.find]
-include = ["streaming*", "lakehouse*", "drift*", "models*", "evals*"]
+include = ["streaming*", "lakehouse*", "drift*", "models*", "evals*", "regulatory*"]
 
 [tool.setuptools.package-data]
 streaming = ["schemas/*.avsc"]
+regulatory = ["sources.json", "sources.lock.json", "chunks.jsonl"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

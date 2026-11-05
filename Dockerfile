@@ -8,6 +8,9 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PYTHONPATH=/app
 WORKDIR /app
 
+# poppler: pdftotext for the regulation corpus builder (regulatory/corpus.py)
+RUN apt-get update && apt-get install -y --no-install-recommends poppler-utils && rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml ./
 RUN mkdir -p streaming lakehouse \
  && touch README.md streaming/__init__.py lakehouse/__init__.py \
@@ -21,6 +24,8 @@ COPY lakehouse ./lakehouse
 COPY contracts ./contracts
 COPY drift ./drift
 COPY models ./models
+COPY regulatory ./regulatory
+COPY evals ./evals
 COPY tests/fixtures ./tests/fixtures
 
 CMD ["python", "-m", "streaming.replayer", "--help"]

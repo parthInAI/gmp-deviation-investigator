@@ -1,0 +1,529 @@
+{
+  "note": "Expected = the clause(s) that answer the question (chunk ids without the #part suffix). Split assigned by random.Random(2026).sample, 15 dev / 50 test. Written before any retrieval code existed.",
+  "questions": [
+    {
+      "id": "q01",
+      "split": "test",
+      "question": "Who carries the ultimate responsibility for making sure the pharmaceutical quality system works and is properly resourced?",
+      "expected": [
+        "EU-GMP-Ch1:1.5"
+      ]
+    },
+    {
+      "id": "q02",
+      "split": "test",
+      "question": "If an investigation cannot establish the true root cause of a deviation, what should the site do instead?",
+      "expected": [
+        "EU-GMP-Ch1:1.4"
+      ]
+    },
+    {
+      "id": "q03",
+      "split": "test",
+      "question": "Before concluding that a deviation was caused by operator error, what must the investigation make sure it has not overlooked?",
+      "expected": [
+        "EU-GMP-Ch1:1.4"
+      ]
+    },
+    {
+      "id": "q04",
+      "split": "test",
+      "question": "Does GMP require significant deviations to be fully recorded and investigated to find the root cause, with corrective and preventive action?",
+      "expected": [
+        "EU-GMP-Ch1:1.8",
+        "EU-GMP-Ch1:1.4"
+      ]
+    },
+    {
+      "id": "q05",
+      "split": "test",
+      "question": "How often should product quality reviews normally be done, and what should they cover about deviations and CAPA effectiveness?",
+      "expected": [
+        "EU-GMP-Ch1:1.10"
+      ]
+    },
+    {
+      "id": "q06",
+      "split": "test",
+      "question": "After a product quality review, what has to be assessed and how are the resulting actions followed up?",
+      "expected": [
+        "EU-GMP-Ch1:1.11"
+      ]
+    },
+    {
+      "id": "q07",
+      "split": "dev",
+      "question": "What are the principles of quality risk management in the EU GMP guide?",
+      "expected": [
+        "EU-GMP-Ch1:1.13"
+      ]
+    },
+    {
+      "id": "q08",
+      "split": "test",
+      "question": "What must happen before a planned change to a manufacturing process is implemented?",
+      "expected": [
+        "EU-GMP-Ch1:1.4"
+      ]
+    },
+    {
+      "id": "q09",
+      "split": "test",
+      "question": "Can a batch be sold or supplied before a Qualified Person has certified it?",
+      "expected": [
+        "EU-GMP-Ch1:1.4",
+        "EU-GMP-Ch1:1.9"
+      ]
+    },
+    {
+      "id": "q10",
+      "split": "test",
+      "question": "How long must batch documentation be kept after the batch expires or is certified by the QP?",
+      "expected": [
+        "EU-GMP-Ch4:4.11"
+      ]
+    },
+    {
+      "id": "q11",
+      "split": "test",
+      "question": "When should a GMP record be completed relative to the action it records?",
+      "expected": [
+        "EU-GMP-Ch4:4.8"
+      ]
+    },
+    {
+      "id": "q12",
+      "split": "test",
+      "question": "What is required when someone corrects an entry on a GMP document?",
+      "expected": [
+        "EU-GMP-Ch4:4.9"
+      ]
+    },
+    {
+      "id": "q13",
+      "split": "test",
+      "question": "What should a batch processing record contain about problems and deviations from the processing instructions?",
+      "expected": [
+        "EU-GMP-Ch4:4.20"
+      ]
+    },
+    {
+      "id": "q14",
+      "split": "test",
+      "question": "For a validated process that is continuously monitored, can automatically generated batch reports be limited to exceptions and OOS data?",
+      "expected": [
+        "EU-GMP-Ch4:4.20"
+      ]
+    },
+    {
+      "id": "q15",
+      "split": "dev",
+      "question": "For electronic records, which data must at least be defined as raw data?",
+      "expected": [
+        "EU-GMP-Ch4:Principle"
+      ]
+    },
+    {
+      "id": "q16",
+      "split": "dev",
+      "question": "Is a written procedure required for investigations into deviations and non-conformances?",
+      "expected": [
+        "EU-GMP-Ch4:4.29"
+      ]
+    },
+    {
+      "id": "q17",
+      "split": "test",
+      "question": "What should equipment and area logbooks record?",
+      "expected": [
+        "EU-GMP-Ch4:4.31"
+      ]
+    },
+    {
+      "id": "q18",
+      "split": "test",
+      "question": "Who must approve, sign and date documents that contain instructions such as SOPs?",
+      "expected": [
+        "EU-GMP-Ch4:4.3"
+      ]
+    },
+    {
+      "id": "q19",
+      "split": "test",
+      "question": "In what style should standard operating procedures be written?",
+      "expected": [
+        "EU-GMP-Ch4:4.4"
+      ]
+    },
+    {
+      "id": "q20",
+      "split": "test",
+      "question": "What should processing instructions specify about in-process controls and critical process parameters?",
+      "expected": [
+        "EU-GMP-Ch4:4.18"
+      ]
+    },
+    {
+      "id": "q21",
+      "split": "test",
+      "question": "How long should raw data that supports the marketing authorisation be retained?",
+      "expected": [
+        "EU-GMP-Ch4:4.12"
+      ]
+    },
+    {
+      "id": "q22",
+      "split": "test",
+      "question": "Why must distribution records be kept for each batch?",
+      "expected": [
+        "EU-GMP-Ch4:4.28"
+      ]
+    },
+    {
+      "id": "q23",
+      "split": "test",
+      "question": "What should the manufacturing formula state about expected yield?",
+      "expected": [
+        "EU-GMP-Ch4:4.17"
+      ]
+    },
+    {
+      "id": "q24",
+      "split": "test",
+      "question": "How should the integrity of records be protected throughout their retention period?",
+      "expected": [
+        "EU-GMP-Ch4:4.10",
+        "EU-GMP-Ch4:4.1"
+      ]
+    },
+    {
+      "id": "q25",
+      "split": "test",
+      "question": "Should a computerised system keep an audit trail of changes and deletions to GMP data, and must a reason be documented?",
+      "expected": [
+        "EU-GMP-Annex11:9"
+      ]
+    },
+    {
+      "id": "q26",
+      "split": "test",
+      "question": "What should be done with the root cause of a critical incident involving a computerised system?",
+      "expected": [
+        "EU-GMP-Annex11:13"
+      ]
+    },
+    {
+      "id": "q27",
+      "split": "dev",
+      "question": "In a computerised batch release system, who may certify batches and how must it be signed?",
+      "expected": [
+        "EU-GMP-Annex11:15"
+      ]
+    },
+    {
+      "id": "q28",
+      "split": "test",
+      "question": "What are electronic signatures expected to do?",
+      "expected": [
+        "EU-GMP-Annex11:14"
+      ]
+    },
+    {
+      "id": "q29",
+      "split": "test",
+      "question": "When data are moved to another format or system, what must validation check?",
+      "expected": [
+        "EU-GMP-Annex11:4.8"
+      ]
+    },
+    {
+      "id": "q30",
+      "split": "test",
+      "question": "How should the accuracy of critical data entered by hand be checked?",
+      "expected": [
+        "EU-GMP-Annex11:6"
+      ]
+    },
+    {
+      "id": "q31",
+      "split": "test",
+      "question": "What arrangements are needed in case a computerised system supporting a critical process breaks down?",
+      "expected": [
+        "EU-GMP-Annex11:16"
+      ]
+    },
+    {
+      "id": "q32",
+      "split": "test",
+      "question": "Should computerised systems be evaluated periodically to confirm they remain in a validated state, and what should that cover?",
+      "expected": [
+        "EU-GMP-Annex11:11"
+      ]
+    },
+    {
+      "id": "q33",
+      "split": "dev",
+      "question": "Must changes to a computerised system's configuration follow a controlled, defined procedure?",
+      "expected": [
+        "EU-GMP-Annex11:10"
+      ]
+    },
+    {
+      "id": "q34",
+      "split": "test",
+      "question": "What should be checked about back-ups of GMP data?",
+      "expected": [
+        "EU-GMP-Annex11:7.2"
+      ]
+    },
+    {
+      "id": "q35",
+      "split": "test",
+      "question": "Should the system record who entered, changed, confirmed or deleted data, and when?",
+      "expected": [
+        "EU-GMP-Annex11:12.4"
+      ]
+    },
+    {
+      "id": "q36",
+      "split": "dev",
+      "question": "What agreements are needed when a third party installs, maintains or hosts a GMP computerised system?",
+      "expected": [
+        "EU-GMP-Annex11:3.1"
+      ]
+    },
+    {
+      "id": "q37",
+      "split": "test",
+      "question": "On what should decisions about the extent of validation and data integrity controls for a computerised system be based?",
+      "expected": [
+        "EU-GMP-Annex11:1"
+      ]
+    },
+    {
+      "id": "q38",
+      "split": "test",
+      "question": "What should user requirement specifications for a computerised system be based on?",
+      "expected": [
+        "EU-GMP-Annex11:4.4"
+      ]
+    },
+    {
+      "id": "q39",
+      "split": "dev",
+      "question": "Can replacing a manual operation with a computerised system be allowed to increase the overall risk of the process?",
+      "expected": [
+        "EU-GMP-Annex11:Principle"
+      ]
+    },
+    {
+      "id": "q40",
+      "split": "dev",
+      "question": "Under the draft AI annex, may a large language model be used in a critical GMP application?",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ]
+    },
+    {
+      "id": "q41",
+      "split": "dev",
+      "question": "If an LLM is used for a non-critical GMP task, who is responsible for checking its output?",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ]
+    },
+    {
+      "id": "q42",
+      "split": "dev",
+      "question": "Who should define the acceptance criteria for testing an AI model, and when must they be approved?",
+      "expected": [
+        "EU-GMP-Annex22-draft:4.2"
+      ]
+    },
+    {
+      "id": "q43",
+      "split": "test",
+      "question": "Must an AI model perform at least as well as the process it replaces?",
+      "expected": [
+        "EU-GMP-Annex22-draft:4.3"
+      ]
+    },
+    {
+      "id": "q44",
+      "split": "test",
+      "question": "How should test data be kept independent from the data used to train and validate a model?",
+      "expected": [
+        "EU-GMP-Annex22-draft:6.1"
+      ]
+    },
+    {
+      "id": "q45",
+      "split": "test",
+      "question": "May a staff member who has seen the test data help train the same model?",
+      "expected": [
+        "EU-GMP-Annex22-draft:6.5"
+      ]
+    },
+    {
+      "id": "q46",
+      "split": "test",
+      "question": "Should the system log the model's confidence score for each prediction?",
+      "expected": [
+        "EU-GMP-Annex22-draft:9.1"
+      ]
+    },
+    {
+      "id": "q47",
+      "split": "test",
+      "question": "What should a model do when its confidence in a prediction is very low?",
+      "expected": [
+        "EU-GMP-Annex22-draft:9.2"
+      ]
+    },
+    {
+      "id": "q48",
+      "split": "test",
+      "question": "Which explainability techniques does the draft AI annex mention for showing what drove a model's decision?",
+      "expected": [
+        "EU-GMP-Annex22-draft:8.1"
+      ]
+    },
+    {
+      "id": "q49",
+      "split": "test",
+      "question": "Is it acceptable to generate test data or labels with generative AI?",
+      "expected": [
+        "EU-GMP-Annex22-draft:5.6"
+      ]
+    },
+    {
+      "id": "q50",
+      "split": "test",
+      "question": "How should drift in a deployed model's input data be monitored?",
+      "expected": [
+        "EU-GMP-Annex22-draft:10.4"
+      ]
+    },
+    {
+      "id": "q51",
+      "split": "dev",
+      "question": "What must a test plan for an AI model contain before testing starts?",
+      "expected": [
+        "EU-GMP-Annex22-draft:7.2"
+      ]
+    },
+    {
+      "id": "q52",
+      "split": "test",
+      "question": "What should happen if an AI model fails its acceptance criteria or not all test data is used?",
+      "expected": [
+        "EU-GMP-Annex22-draft:7.3"
+      ]
+    },
+    {
+      "id": "q53",
+      "split": "test",
+      "question": "What records are needed when a human operator reviews a model's output before making a decision?",
+      "expected": [
+        "EU-GMP-Annex22-draft:10.5",
+        "EU-GMP-Annex22-draft:3.3"
+      ]
+    },
+    {
+      "id": "q54",
+      "split": "test",
+      "question": "What should the intended-use description of an AI model say about the data it takes as input?",
+      "expected": [
+        "EU-GMP-Annex22-draft:3.1"
+      ]
+    },
+    {
+      "id": "q55",
+      "split": "test",
+      "question": "How large must an AI model's test dataset be?",
+      "expected": [
+        "EU-GMP-Annex22-draft:5.2"
+      ]
+    },
+    {
+      "id": "q56",
+      "split": "dev",
+      "question": "Must a tested AI model be put under change control, and when must it be retested?",
+      "expected": [
+        "EU-GMP-Annex22-draft:10.1"
+      ]
+    },
+    {
+      "id": "q57",
+      "split": "dev",
+      "question": "Which warning letter criticised blaming an 'old reagent' for an impurity that could not be reproduced?",
+      "expected": [
+        "FDA-WL-Strides-2019:2"
+      ]
+    },
+    {
+      "id": "q58",
+      "split": "test",
+      "question": "Which firm failed to document a leak during aseptic filling in its batch record?",
+      "expected": [
+        "FDA-WL-Akorn-2019:4"
+      ]
+    },
+    {
+      "id": "q59",
+      "split": "test",
+      "question": "Which warning letter found that laboratory data could be deleted and altered in computer systems?",
+      "expected": [
+        "FDA-WL-Akorn-2019:2"
+      ]
+    },
+    {
+      "id": "q60",
+      "split": "test",
+      "question": "In which warning letter was an investigation into contaminated media fill units found inadequate?",
+      "expected": [
+        "FDA-WL-Wintac-2020:1"
+      ]
+    },
+    {
+      "id": "q61",
+      "split": "dev",
+      "question": "Which firm used a rapid microbiological test method without showing it was equivalent to the USP compendial method?",
+      "expected": [
+        "FDA-WL-AbsolutelyNatural-2025:2"
+      ]
+    },
+    {
+      "id": "q62",
+      "split": "test",
+      "question": "Which firm did not revalidate its manufacturing processes after making major process changes?",
+      "expected": [
+        "FDA-WL-Bentley-2026:3"
+      ]
+    },
+    {
+      "id": "q63",
+      "split": "dev",
+      "question": "Which warning letter cited laboratory notebook entries that were not made at the time of the work?",
+      "expected": [
+        "FDA-WL-Unipack-2025:2"
+      ]
+    },
+    {
+      "id": "q64",
+      "split": "test",
+      "question": "Which contract testing laboratory's quality unit failed to establish procedures for deviations and change control?",
+      "expected": [
+        "FDA-WL-RhyzLabs-2025:2"
+      ]
+    },
+    {
+      "id": "q65",
+      "split": "test",
+      "question": "Which warning letter describes a quality unit with evidence of uncontrolled shredding of GMP documents?",
+      "expected": [
+        "FDA-WL-Strides-2019:1"
+      ]
+    }
+  ]
+}

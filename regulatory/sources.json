@@ -1,0 +1,89 @@
+{
+  "note": "Public texts only. EudraLex: European Commission (reuse authorised, source acknowledged). FDA warning letters: US federal government works. Each download is pinned by SHA-256; a changed file stops the build instead of silently changing the corpus.",
+  "documents": [
+    {
+      "id": "EU-GMP-Ch1",
+      "title": "EudraLex Vol. 4, Chapter 1: Pharmaceutical Quality System",
+      "status": "in force (revision 3, from 31 January 2013)",
+      "kind": "eudralex",
+      "url": "https://health.ec.europa.eu/document/download/e458c423-f564-4171-b344-030a461c567f_en?filename=vol4-chap1_2013-01_en.pdf"
+    },
+    {
+      "id": "EU-GMP-Ch4",
+      "title": "EudraLex Vol. 4, Chapter 4: Documentation",
+      "status": "in force (from 30 June 2011); a revision was in public consultation July-October 2025",
+      "kind": "eudralex",
+      "url": "https://health.ec.europa.eu/document/download/104b3eb8-81a7-4858-9419-cb06562adb66_en?filename=chapter4_01-2011_en.pdf"
+    },
+    {
+      "id": "EU-GMP-Annex11",
+      "title": "EudraLex Vol. 4, Annex 11: Computerised Systems",
+      "status": "in force (from 30 June 2011); a revision was in public consultation July-October 2025",
+      "kind": "eudralex",
+      "url": "https://health.ec.europa.eu/document/download/8d305550-dd22-4dad-8463-2ddb4a1345f1_en?filename=annex11_01-2011_en.pdf"
+    },
+    {
+      "id": "EU-GMP-Annex22-draft",
+      "title": "EudraLex Vol. 4, Annex 22: Artificial Intelligence (consultation draft)",
+      "status": "DRAFT: published for consultation 7 July 2025, consultation closed 7 October 2025; not yet adopted",
+      "kind": "eudralex",
+      "url": "https://health.ec.europa.eu/document/download/5f38a92d-bb8e-4264-8898-ea076e926db6_en?filename=mp_vol4_chap4_annex22_consultation_guideline_en.pdf"
+    },
+    {
+      "id": "FDA-WL-Strides-2019",
+      "title": "FDA warning letter 320-19-28, Strides Pharma Science Limited (1 July 2019)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/strides-pharma-science-limited-576722-07012019"
+    },
+    {
+      "id": "FDA-WL-Akorn-2019",
+      "title": "FDA warning letter, Akorn Inc. (13 June 2019)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/akorn-inc-568173-06132019"
+    },
+    {
+      "id": "FDA-WL-Wintac-2020",
+      "title": "FDA warning letter, Wintac Limited (13 August 2020)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/wintac-limited-606700-08132020"
+    },
+    {
+      "id": "FDA-WL-Columbia-2025",
+      "title": "FDA warning letter, Columbia Cosmetics Manufacturing Inc. (11 September 2025)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/columbia-cosmetics-manufacturing-inc-710885-09112025"
+    },
+    {
+      "id": "FDA-WL-RhyzLabs-2025",
+      "title": "FDA warning letter, Rhyz Analytical Labs (12 November 2025)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/rhyz-analytical-labs-715298-11122025"
+    },
+    {
+      "id": "FDA-WL-Unipack-2025",
+      "title": "FDA warning letter, Unipack LLC (19 December 2025)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/unipack-llc-716621-12192025"
+    },
+    {
+      "id": "FDA-WL-AbsolutelyNatural-2025",
+      "title": "FDA warning letter, Absolutely Natural (30 December 2025)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/absolutely-natural-715690-12302025"
+    },
+    {
+      "id": "FDA-WL-Bentley-2026",
+      "title": "FDA warning letter, Bentley Laboratories LLC (17 September 2026)",
+      "status": "published warning letter",
+      "kind": "fda_warning_letter",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/bentley-laboratories-llc-732028-09172026"
+    }
+  ]
+}
