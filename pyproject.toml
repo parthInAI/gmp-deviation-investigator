@@ -22,14 +22,16 @@ dependencies = [
 lakehouse = ["deltalake>=1.0", "pyarrow>=17"]
 spark = ["pyspark==4.0.1"]
 models = ["torch>=2.4", "mlflow>=3.0,<4", "matplotlib>=3.8"]  # torch: install the CPU wheel first (see Dockerfile)
+mcp = ["mcp>=1.10,<2"]  # Phase 4 MCP servers (historian, QMS)
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [tool.setuptools.packages.find]
-include = ["streaming*", "lakehouse*", "drift*", "models*", "evals*", "regulatory*"]
+include = ["streaming*", "lakehouse*", "drift*", "models*", "evals*", "regulatory*", "mcp_servers*"]
 
 [tool.setuptools.package-data]
 streaming = ["schemas/*.avsc"]
 regulatory = ["sources.json", "sources.lock.json", "chunks.jsonl"]
+"mcp_servers.historian" = ["confidence.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

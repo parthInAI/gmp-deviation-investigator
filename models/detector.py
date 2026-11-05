@@ -18,7 +18,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from models import lstm_ae
 from models.alarms import alarms
 from models.features import TimeProfile, smooth_causal
 from models.pca_monitor import PCAMonitor
@@ -53,6 +52,8 @@ class Detector:
         if self.kind == "pca":
             raw = self.pca.scores(z)
         else:
+            from models import lstm_ae  # torch only needed for the LSTM detector
+
             raw = {"recon": lstm_ae.score(self.lstm, frame, z, self.window)}
         return {k: np.where(cov, v, 0.0) for k, v in raw.items()}
 
@@ -98,8 +99,6 @@ class Detector:
 
     @classmethod
     def load(cls, directory: Path) -> Detector:
-        import torch
-
         directory = Path(directory)
         manifest = json.loads((directory / "manifest.json").read_text())
         for f, h in manifest["files"].items():
@@ -119,6 +118,10 @@ class Detector:
         if det.kind == "pca":
             det.pca = PCAMonitor.from_dict(json.loads((directory / "pca.json").read_text()))
         else:
+            import torch
+
+            from models import lstm_ae
+
             m = lstm_ae.LSTMAutoencoder(len(profile.features), **config["lstm"])
             m.load_state_dict(torch.load(directory / "lstm.pt"))
             m.eval()

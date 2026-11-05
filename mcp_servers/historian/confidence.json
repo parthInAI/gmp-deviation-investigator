@@ -1,0 +1,41 @@
+{
+  "source": "docs/phase3/phase3_gate.json (held-out test, scored once on 2026-10-23, PCA detector)",
+  "meaning": "share of readings at this score level that were inside an active fault",
+  "bands": [
+    {
+      "label": "0-0.5x limit",
+      "low": 0.0,
+      "high": 0.5,
+      "fault_share": 0.011,
+      "readings": 24882
+    },
+    {
+      "label": "0.5-1x limit",
+      "low": 0.5,
+      "high": 1.0,
+      "fault_share": 0.092,
+      "readings": 1267
+    },
+    {
+      "label": "1-2x limit",
+      "low": 1.0,
+      "high": 2.0,
+      "fault_share": 0.501,
+      "readings": 1176
+    },
+    {
+      "label": "2-5x limit",
+      "low": 2.0,
+      "high": 5.0,
+      "fault_share": 0.694,
+      "readings": 235
+    },
+    {
+      "label": "5-infx limit",
+      "low": 5.0,
+      "high": 1000000000.0,
+      "fault_share": 0.96,
+      "readings": 125
+    }
+  ]
+}

@@ -18,7 +18,7 @@ jobs:
           distribution: temurin
           java-version: "17"
       - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
-      - run: pip install -e ".[lakehouse,spark,models,dev]"
+      - run: pip install -e ".[lakehouse,spark,models,mcp,dev]"
       - run: ruff check .
       - run: pytest -q
 
