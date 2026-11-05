@@ -1,0 +1,227 @@
+{
+  "split": "dev",
+  "questions": 15,
+  "recall_at_1": 0.933,
+  "recall_at_5": 1.0,
+  "settings": {
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "query_prefix": "Represent this sentence for searching relevant passages: ",
+    "candidates": 20,
+    "mode": "hybrid",
+    "rrf_k": 60,
+    "table": "regulation_chunks"
+  },
+  "evaluated_at": "2026-11-05T21:25:02.782555+00:00",
+  "per_question": [
+    {
+      "id": "q07",
+      "expected": [
+        "EU-GMP-Ch1:1.13"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Ch1:1.13",
+        "EU-GMP-Ch4:Principle",
+        "EU-GMP-Annex22-draft:2.3",
+        "EU-GMP-Ch1:1.2",
+        "EU-GMP-Ch1:Principle"
+      ]
+    },
+    {
+      "id": "q15",
+      "expected": [
+        "EU-GMP-Ch4:Principle"
+      ],
+      "rank": 2,
+      "top5": [
+        "EU-GMP-Ch4:4.12",
+        "EU-GMP-Ch4:Principle",
+        "EU-GMP-Annex11:7.1",
+        "EU-GMP-Annex11:5",
+        "EU-GMP-Ch4:4.10"
+      ]
+    },
+    {
+      "id": "q16",
+      "expected": [
+        "EU-GMP-Ch4:4.29"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Ch4:4.29",
+        "EU-GMP-Ch1:1.10",
+        "EU-GMP-Ch4:Principle",
+        "FDA-WL-Akorn-2019:remediation-2",
+        "EU-GMP-Annex22-draft:7.3"
+      ]
+    },
+    {
+      "id": "q27",
+      "expected": [
+        "EU-GMP-Annex11:15"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:15",
+        "EU-GMP-Ch4:4.21",
+        "EU-GMP-Ch4:4.20",
+        "EU-GMP-Annex11:8.2",
+        "EU-GMP-Ch4:4.11"
+      ]
+    },
+    {
+      "id": "q33",
+      "expected": [
+        "EU-GMP-Annex11:10"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:10",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex11:4.2",
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex11:3.1"
+      ]
+    },
+    {
+      "id": "q36",
+      "expected": [
+        "EU-GMP-Annex11:3.1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:3.1",
+        "EU-GMP-Annex11:Principle",
+        "EU-GMP-Annex11:4.4",
+        "EU-GMP-Annex11:11",
+        "EU-GMP-Annex11:4.3"
+      ]
+    },
+    {
+      "id": "q39",
+      "expected": [
+        "EU-GMP-Annex11:Principle"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:Principle",
+        "EU-GMP-Annex11:16",
+        "EU-GMP-Annex11:6",
+        "EU-GMP-Annex11:15",
+        "EU-GMP-Annex11:1"
+      ]
+    },
+    {
+      "id": "q40",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:1",
+        "EU-GMP-Annex22-draft:2.1",
+        "EU-GMP-Annex22-draft:8.1",
+        "EU-GMP-Annex22-draft:7.1",
+        "EU-GMP-Annex22-draft:Glossary"
+      ]
+    },
+    {
+      "id": "q41",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:1",
+        "EU-GMP-Annex22-draft:8.1",
+        "EU-GMP-Ch4:4.29",
+        "EU-GMP-Ch4:Principle",
+        "EU-GMP-Annex22-draft:10.5"
+      ]
+    },
+    {
+      "id": "q42",
+      "expected": [
+        "EU-GMP-Annex22-draft:4.2"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:4.2",
+        "EU-GMP-Annex22-draft:4.3",
+        "EU-GMP-Annex22-draft:4.1",
+        "EU-GMP-Annex22-draft:7.2",
+        "EU-GMP-Annex22-draft:2.1"
+      ]
+    },
+    {
+      "id": "q51",
+      "expected": [
+        "EU-GMP-Annex22-draft:7.2"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:7.2",
+        "EU-GMP-Annex22-draft:6.1",
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex22-draft:Glossary"
+      ]
+    },
+    {
+      "id": "q56",
+      "expected": [
+        "EU-GMP-Annex22-draft:10.1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex22-draft:10.5",
+        "EU-GMP-Annex22-draft:1",
+        "EU-GMP-Annex22-draft:6.5"
+      ]
+    },
+    {
+      "id": "q57",
+      "expected": [
+        "FDA-WL-Strides-2019:2"
+      ],
+      "rank": 1,
+      "top5": [
+        "FDA-WL-Strides-2019:2",
+        "FDA-WL-AbsolutelyNatural-2025:remediation-6",
+        "FDA-WL-Bentley-2026:2",
+        "FDA-WL-Akorn-2019:2",
+        "FDA-WL-Akorn-2019:1"
+      ]
+    },
+    {
+      "id": "q61",
+      "expected": [
+        "FDA-WL-AbsolutelyNatural-2025:2"
+      ],
+      "rank": 1,
+      "top5": [
+        "FDA-WL-AbsolutelyNatural-2025:2",
+        "FDA-WL-AbsolutelyNatural-2025:remediation-4",
+        "FDA-WL-Unipack-2025:3",
+        "FDA-WL-RhyzLabs-2025:1",
+        "FDA-WL-Bentley-2026:remediation-4"
+      ]
+    },
+    {
+      "id": "q63",
+      "expected": [
+        "FDA-WL-Unipack-2025:2"
+      ],
+      "rank": 1,
+      "top5": [
+        "FDA-WL-Unipack-2025:2",
+        "FDA-WL-Akorn-2019:2",
+        "FDA-WL-Akorn-2019:1",
+        "FDA-WL-Bentley-2026:intro",
+        "EU-GMP-Ch4:4.7"
+      ]
+    }
+  ]
+}

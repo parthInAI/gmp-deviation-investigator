@@ -1,0 +1,227 @@
+{
+  "split": "dev",
+  "questions": 15,
+  "recall_at_1": 0.733,
+  "recall_at_5": 0.867,
+  "settings": {
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "query_prefix": "Represent this sentence for searching relevant passages: ",
+    "candidates": 20,
+    "mode": "dense",
+    "rrf_k": 60,
+    "table": "regulation_chunks"
+  },
+  "evaluated_at": "2026-11-05T21:24:31.640273+00:00",
+  "per_question": [
+    {
+      "id": "q07",
+      "expected": [
+        "EU-GMP-Ch1:1.13"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Ch1:1.13",
+        "EU-GMP-Ch1:1.8",
+        "EU-GMP-Ch4:4.29",
+        "EU-GMP-Ch4:Principle",
+        "EU-GMP-Ch1:1.12"
+      ]
+    },
+    {
+      "id": "q15",
+      "expected": [
+        "EU-GMP-Ch4:Principle"
+      ],
+      "rank": null,
+      "top5": [
+        "EU-GMP-Annex11:7.1",
+        "EU-GMP-Ch4:4.12",
+        "EU-GMP-Annex11:4.8",
+        "EU-GMP-Annex11:5",
+        "EU-GMP-Annex11:7.2"
+      ]
+    },
+    {
+      "id": "q16",
+      "expected": [
+        "EU-GMP-Ch4:4.29"
+      ],
+      "rank": null,
+      "top5": [
+        "EU-GMP-Ch4:4.25",
+        "EU-GMP-Ch4:4.26",
+        "EU-GMP-Annex22-draft:7.3",
+        "EU-GMP-Ch4:4.27",
+        "EU-GMP-Ch1:1.10"
+      ]
+    },
+    {
+      "id": "q27",
+      "expected": [
+        "EU-GMP-Annex11:15"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:15",
+        "EU-GMP-Ch4:4.21",
+        "EU-GMP-Ch4:4.20",
+        "EU-GMP-Ch1:1.9",
+        "EU-GMP-Annex11:8.2"
+      ]
+    },
+    {
+      "id": "q33",
+      "expected": [
+        "EU-GMP-Annex11:10"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:10",
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex11:16",
+        "EU-GMP-Annex11:Principle"
+      ]
+    },
+    {
+      "id": "q36",
+      "expected": [
+        "EU-GMP-Annex11:3.1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex11:3.1",
+        "EU-GMP-Annex11:4.3",
+        "EU-GMP-Annex11:Principle",
+        "EU-GMP-Annex11:4.4",
+        "EU-GMP-Annex11:11"
+      ]
+    },
+    {
+      "id": "q39",
+      "expected": [
+        "EU-GMP-Annex11:Principle"
+      ],
+      "rank": 2,
+      "top5": [
+        "EU-GMP-Annex11:16",
+        "EU-GMP-Annex11:Principle",
+        "EU-GMP-Annex11:1",
+        "EU-GMP-Annex11:6",
+        "EU-GMP-Annex11:10"
+      ]
+    },
+    {
+      "id": "q40",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:1",
+        "EU-GMP-Annex22-draft:2.1",
+        "EU-GMP-Annex22-draft:7.1",
+        "EU-GMP-Annex22-draft:3.1",
+        "EU-GMP-Annex22-draft:2.2"
+      ]
+    },
+    {
+      "id": "q41",
+      "expected": [
+        "EU-GMP-Annex22-draft:1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:1",
+        "EU-GMP-Ch4:Principle",
+        "EU-GMP-Annex11:9",
+        "EU-GMP-Annex22-draft:8.1",
+        "EU-GMP-Annex22-draft:7.4"
+      ]
+    },
+    {
+      "id": "q42",
+      "expected": [
+        "EU-GMP-Annex22-draft:4.2"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:4.2",
+        "EU-GMP-Annex22-draft:4.3",
+        "EU-GMP-Annex22-draft:7.2",
+        "EU-GMP-Annex22-draft:7.1",
+        "EU-GMP-Annex22-draft:4.1"
+      ]
+    },
+    {
+      "id": "q51",
+      "expected": [
+        "EU-GMP-Annex22-draft:7.2"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:7.2",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex22-draft:7.1",
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex22-draft:5.4"
+      ]
+    },
+    {
+      "id": "q56",
+      "expected": [
+        "EU-GMP-Annex22-draft:10.1"
+      ],
+      "rank": 1,
+      "top5": [
+        "EU-GMP-Annex22-draft:10.1",
+        "EU-GMP-Annex22-draft:10.2",
+        "EU-GMP-Annex22-draft:10.5",
+        "EU-GMP-Annex22-draft:7.1",
+        "EU-GMP-Annex22-draft:4.3"
+      ]
+    },
+    {
+      "id": "q57",
+      "expected": [
+        "FDA-WL-Strides-2019:2"
+      ],
+      "rank": 3,
+      "top5": [
+        "FDA-WL-Akorn-2019:remediation-11",
+        "FDA-WL-Akorn-2019:2",
+        "FDA-WL-Strides-2019:2",
+        "FDA-WL-Akorn-2019:remediation-6",
+        "FDA-WL-Akorn-2019:remediation-10"
+      ]
+    },
+    {
+      "id": "q61",
+      "expected": [
+        "FDA-WL-AbsolutelyNatural-2025:2"
+      ],
+      "rank": 1,
+      "top5": [
+        "FDA-WL-AbsolutelyNatural-2025:2",
+        "FDA-WL-AbsolutelyNatural-2025:remediation-4",
+        "FDA-WL-Unipack-2025:3",
+        "FDA-WL-RhyzLabs-2025:1",
+        "FDA-WL-Bentley-2026:2"
+      ]
+    },
+    {
+      "id": "q63",
+      "expected": [
+        "FDA-WL-Unipack-2025:2"
+      ],
+      "rank": 1,
+      "top5": [
+        "FDA-WL-Unipack-2025:2",
+        "FDA-WL-Akorn-2019:2",
+        "FDA-WL-Bentley-2026:intro",
+        "FDA-WL-Unipack-2025:3",
+        "FDA-WL-RhyzLabs-2025:1"
+      ]
+    }
+  ]
+}
