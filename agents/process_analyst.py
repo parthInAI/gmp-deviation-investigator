@@ -128,13 +128,20 @@ async def llm_analyst(tb: Toolbox, batch_id: int, callbacks=None) -> ProcessFind
 
     from agents.llm import chat
 
-    agent = create_react_agent(chat("analyst"), _tools(tb), prompt=ANALYST_PROMPT, response_format=ProcessFindings)
+    agent = create_react_agent(chat("analyst"), _tools(tb), prompt=ANALYST_PROMPT)
+    cfg = {"callbacks": callbacks or [], "recursion_limit": 2 * config.MAX_ANALYST_STEPS + 2}
     out = await agent.ainvoke(
         {
             "messages": [
                 ("user", f"Investigate batch {batch_id}. Find what moved, when, and which equipment it points at.")
             ]
         },
-        config={"callbacks": callbacks or [], "recursion_limit": 2 * config.MAX_ANALYST_STEPS + 2},
+        config=cfg,
     )
-    return out["structured_response"]
+    # Final structured answer in Anthropic's native JSON-schema mode: the default forced-tool-call route is not
+    # supported on the current Claude models.
+    final = chat("analyst").with_structured_output(ProcessFindings, method="json_schema")
+    return await final.ainvoke(
+        [*out["messages"], ("user", "Now return your findings as ProcessFindings, following the rules above.")],
+        config={"callbacks": callbacks or []},
+    )

@@ -41,6 +41,7 @@ COST_LIMIT_EUR = 0.50  # gate criterion; a run that would exceed it is stopped, 
 
 def price(model: str, input_tokens: int) -> tuple[float, float]:
     """(input, output) USD per million tokens for a model id as reported by the provider."""
+    model = model.split("/")[-1]  # Gemini may report "models/gemini-..."
     if model.startswith("claude-haiku-5-5") and input_tokens > 100_000:
         return PRICES_USD_PER_MTOK["claude-haiku-5-5@>100k"]
     for key, p in PRICES_USD_PER_MTOK.items():

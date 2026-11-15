@@ -66,7 +66,7 @@ async def write(pack: str, feedback: str | None, callbacks) -> Report:
     msgs = [("system", WRITER_PROMPT), ("user", f"Evidence pack:\n{pack}")]
     if feedback:
         msgs.append(("user", f"The reviewer sent your previous draft back. Fix this and redraft:\n{feedback}"))
-    llm = chat("writer", max_tokens=6000).with_structured_output(Report)
+    llm = chat("writer", max_tokens=6000).with_structured_output(Report, method="json_schema")
     return await llm.ainvoke(msgs, config={"callbacks": callbacks})
 
 

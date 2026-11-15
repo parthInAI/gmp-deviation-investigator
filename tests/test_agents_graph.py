@@ -187,3 +187,28 @@ def test_cost_meter_stops_an_expensive_run():
     m.add("claude-sonnet-5-5", 100_000, 10_000)  # $0.30
     with pytest.raises(CostLimitExceeded):
         m.add("claude-sonnet-5-5", 100_000, 10_000)
+
+
+def test_cost_meter_works_as_a_langchain_callback():
+    """Regression: a dataclass meter was unhashable, and LangChain keeps callback handlers in sets."""
+    from langchain_core.callbacks import CallbackManager
+    from langchain_core.messages import AIMessage
+    from langchain_core.outputs import ChatGeneration, LLMResult
+
+    m = CostMeter(usd_to_eur=1.0)
+    CallbackManager(handlers=[m]).add_handler(m)  # hashing happens here
+    msg = AIMessage(
+        content="x",
+        usage_metadata={"input_tokens": 1000, "output_tokens": 100, "total_tokens": 1100},
+        response_metadata={"model_name": "claude-haiku-5-5"},
+    )
+    m.on_llm_end(LLMResult(generations=[[ChatGeneration(message=msg)]]))
+    assert m.calls and abs(m.usd - (1000 * 0.10 + 100 * 0.50) / 1e6) < 1e-12
+
+
+def test_cost_stop_is_not_swallowed_by_langchain():
+    from agents import config
+
+    assert CostMeter.raise_error is True
+    assert config.price("models/gemini-3.5-flash-lite", 10) == config.price("gemini-3.5-flash-lite", 10)
+    assert config.price("claude-sonnet-5-5-20261001", 10) == (2.00, 10.00)

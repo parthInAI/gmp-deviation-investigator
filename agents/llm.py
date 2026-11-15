@@ -19,8 +19,11 @@ class CostLimitExceeded(RuntimeError):
     pass
 
 
-@dataclass
+@dataclass(eq=False)  # callbacks must be hashable: LangChain keeps handlers in sets
 class CostMeter(BaseCallbackHandler):
+    # LangChain swallows exceptions raised in callbacks unless the handler opts in; without this the
+    # cost stop below would log a warning and the run would carry on spending.
+    raise_error = True
     usd_to_eur: float = float(os.environ.get("GMPDI_USD_EUR", "0.92"))
     limit_eur: float = config.COST_LIMIT_EUR
     calls: list[dict] = field(default_factory=list)
