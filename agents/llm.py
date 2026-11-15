@@ -71,10 +71,13 @@ class CostMeter(BaseCallbackHandler):
 def chat(role: str, max_tokens: int = 4096):
     """The chat model for a role ('writer', 'analyst', 'reviewer'), deterministic settings."""
     model = config.MODELS[role]
-    if model.startswith("mistral"):
-        from langchain_mistralai import ChatMistralAI
+    if model.startswith("gemini"):
+        from langchain_google_genai import ChatGoogleGenerativeAI  # reads GOOGLE_API_KEY
 
-        return ChatMistralAI(model=model, temperature=config.TEMPERATURE, max_tokens=max_tokens, max_retries=3)
+        # Free-tier quotas are per minute: retries with back-off ride out a 429 instead of failing the run.
+        return ChatGoogleGenerativeAI(
+            model=model, temperature=config.TEMPERATURE, max_output_tokens=max_tokens, max_retries=6
+        )
     from langchain_anthropic import ChatAnthropic
 
     return ChatAnthropic(model=model, temperature=config.TEMPERATURE, max_tokens=max_tokens, max_retries=3)

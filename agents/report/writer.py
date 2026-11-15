@@ -1,4 +1,4 @@
-"""Report writer (Claude, structured output) and reviewer (Mistral, LLM-as-judge).
+"""Report writer (Claude, structured output) and reviewer (Gemini, LLM-as-judge).
 
 The writer sees an evidence pack in which every item carries the exact id it may be cited by,
 and nothing else. The reviewer is a different vendor's model: it judges whether each claim's

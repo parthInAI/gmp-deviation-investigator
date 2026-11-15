@@ -6,7 +6,7 @@
     python -m agents.run show --thread <id>
 
 Production wiring by default: historian and QMS over MCP, case historian over A2A, Claude analyst
-and writer, Mistral reviewer. Checkpoints persist in out/agents/checkpoints.sqlite, so a run can wait
+and writer, Gemini reviewer. Checkpoints persist in out/agents/checkpoints.sqlite, so a run can wait
 for its reviewer across restarts. --analyst rules / --offline give a no-LLM path for checks.
 """
 
@@ -52,7 +52,7 @@ async def toolbox(offline: bool):
 
 
 def deps_for(tb, analyst: str, meter: CostMeter) -> Deps:
-    """analyst='llm': Claude analyst + writer, Mistral reviewer. 'rules': no LLM anywhere (baseline, checks)."""
+    """analyst='llm': Claude analyst + writer, Gemini reviewer. 'rules': no LLM anywhere (baseline, checks)."""
     from agents.process_analyst import llm_analyst, rules_analyst
     from agents.report import writer
 

@@ -14,19 +14,22 @@ MODELS = {
     # Sub-agents doing many small tool calls: process data analyst, case historian (CrewAI).
     "analyst": os.environ.get("GMPDI_ANALYST_MODEL", "claude-haiku-5-5"),
     "case_historian": os.environ.get("GMPDI_CASE_MODEL", "claude-haiku-5-5"),
-    # Reviewer from a different vendor, so the writer never grades its own work.
-    "reviewer": os.environ.get("GMPDI_REVIEWER_MODEL", "mistral-medium-latest"),
+    # Reviewer from a different vendor (Google), so the writer never grades its own work. Mistral was the plan's
+    # first choice; its Free plan no longer enables API keys (Nov 2026), so the reviewer is Gemini, which the
+    # plan's skill map lists alongside Mistral. Flash-Lite: its free-tier quota (~500 requests/day) fits the
+    # dev loop and the gate; Flash models are capped at ~20/day on the free tier.
+    "reviewer": os.environ.get("GMPDI_REVIEWER_MODEL", "gemini-3.5-flash-lite"),
 }
 
 # USD per million tokens (input, output). Sources, checked 2026-11-05 and re-checked before the gate:
 #   Claude Sonnet 5.5 $2 / $10; Claude Haiku 5.5 $0.10 / $0.50 for prompts up to 100k tokens
-#   ($0.50 / $2.50 above); Mistral Medium 3.5 (mistral-medium-latest) $1.50 / $7.50.
+#   ($0.50 / $2.50 above); Gemini 3.5 Flash-Lite $0.30 / $2.50 (paid price: runs on the free tier are
+#   counted at the paid price so the reported cost is what a paying user would pay).
 PRICES_USD_PER_MTOK = {
     "claude-sonnet-5-5": (2.00, 10.00),
     "claude-haiku-5-5": (0.10, 0.50),
     "claude-haiku-5-5@>100k": (0.50, 2.50),
-    "mistral-medium-latest": (1.50, 7.50),
-    "mistral-medium-3-5": (1.50, 7.50),
+    "gemini-3.5-flash-lite": (0.30, 2.50),
 }
 
 TEMPERATURE = 0.0
