@@ -59,3 +59,12 @@ def test_lead_gets_similar_cases_over_a2a(historian_url):
     assert cases[0].category == "agitation"
     assert all(c.deviation_id.startswith("DEV-") for c in cases)
     assert usage == {"calls": []}
+
+
+def test_historian_failure_reaches_the_lead_with_its_cause(historian_url, monkeypatch):
+    def broken(tool, args):
+        raise ConnectionError("QMS unreachable")
+
+    monkeypatch.setattr(crew, "qms_call", broken)
+    with pytest.raises(RuntimeError, match="QMS unreachable"):
+        asyncio.run(ask_case_historian(historian_url, "anything"))

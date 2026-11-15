@@ -12,7 +12,7 @@ from __future__ import annotations
 import asyncio
 import os
 
-from a2a.helpers.proto_helpers import get_message_text, new_data_part, new_task
+from a2a.helpers.proto_helpers import get_message_text, new_data_part, new_task, new_text_message
 from a2a.server.agent_execution import AgentExecutor
 from a2a.server.request_handlers.default_request_handler_v2 import DefaultRequestHandlerV2
 from a2a.server.routes.agent_card_routes import create_agent_card_routes
@@ -63,7 +63,11 @@ class CaseHistorianExecutor(AgentExecutor):
         await up.start_work()
         summary = get_message_text(context.message)
         fn = crew.find_similar if self.mode == "crew" else crew.search_only
-        cases, usage = await asyncio.to_thread(fn, summary)
+        try:
+            cases, usage = await asyncio.to_thread(fn, summary)
+        except Exception as e:  # report the cause to the lead instead of a bare "failed"
+            await up.failed(new_text_message(f"{type(e).__name__}: {str(e)[:800]}", role=pb.Role.ROLE_AGENT))
+            return
         await up.add_artifact(
             [new_data_part({"cases": [c.model_dump() for c in cases], "usage": usage, "mode": self.mode})],
             name="similar_cases",

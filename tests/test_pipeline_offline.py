@@ -60,8 +60,14 @@ def test_hundred_batches_pass_the_gate(tmp_path, capsys):
     table = pa.table({"payload": payloads, "decode_ok": [p is not None for p in payloads]})
     write_deltalake(str(tmp_path / "lh" / "bronze" / "process_sensor"), table)
 
-    args = ["--lakehouse", str(tmp_path / "lh"), "--manifest", str(manifest_path),
-            "--report", str(tmp_path / "gate.json")]
+    args = [
+        "--lakehouse",
+        str(tmp_path / "lh"),
+        "--manifest",
+        str(manifest_path),
+        "--report",
+        str(tmp_path / "gate.json"),
+    ]
     # The poisoned message must fail the gate: bronze kept it, the gate noticed it.
     assert gate_check.main(args) == 1
     report = json.loads((tmp_path / "gate.json").read_text())

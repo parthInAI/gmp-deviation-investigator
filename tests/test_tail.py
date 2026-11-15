@@ -3,9 +3,17 @@ from streaming.tail import HEADER, format_reading
 
 def reading(**over):
     rec = {
-        "batch_id": 94, "seq": 7, "time_h": 1.4, "event_time": 1_672_531_200_000,
-        "temperature_k": 298.15, "ph": 6.5, "dissolved_oxygen_mgpl": 14.9, "agitator_rpm": 100.0,
-        "aeration_rate_lph": 60.0, "penicillin_conc_gpl": None, "fault_ref": 0,
+        "batch_id": 94,
+        "seq": 7,
+        "time_h": 1.4,
+        "event_time": 1_672_531_200_000,
+        "temperature_k": 298.15,
+        "ph": 6.5,
+        "dissolved_oxygen_mgpl": 14.9,
+        "agitator_rpm": 100.0,
+        "aeration_rate_lph": 60.0,
+        "penicillin_conc_gpl": None,
+        "fault_ref": 0,
     }
     rec.update(over)
     return rec
