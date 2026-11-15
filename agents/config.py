@@ -32,7 +32,7 @@ PRICES_USD_PER_MTOK = {
     "gemini-3.5-flash-lite": (0.30, 2.50),
 }
 
-TEMPERATURE = 0.0
+TEMPERATURE = 0.0  # used where the provider accepts it (Gemini reviewer); Claude 5.5 models reject the parameter
 MAX_ANALYST_STEPS = 12  # tool calls the process analyst may make
 MAX_REVISIONS = 1  # the reviewer may send a draft back once
 MAX_HYPOTHESES = 5

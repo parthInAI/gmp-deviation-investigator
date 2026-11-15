@@ -83,4 +83,6 @@ def chat(role: str, max_tokens: int = 4096):
         )
     from langchain_anthropic import ChatAnthropic
 
-    return ChatAnthropic(model=model, temperature=config.TEMPERATURE, max_tokens=max_tokens, max_retries=3)
+    # Claude 5.5 models take no temperature parameter (the API rejects it); runs are not bit-for-bit repeatable,
+    # which is why each test item is run exactly once and the full outputs are kept.
+    return ChatAnthropic(model=model, max_tokens=max_tokens, max_retries=3)

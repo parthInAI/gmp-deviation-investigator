@@ -60,7 +60,7 @@ def build_crew():
         """Read one closed deviation in full: symptoms, investigation, root cause, CAPA, effectiveness."""
         return json.dumps(qms_call("get_deviation", {"dev_id": dev_id}))
 
-    llm = LLM(model=f"anthropic/{os.environ.get('GMPDI_CASE_MODEL', 'claude-haiku-5-5')}", temperature=0.0)
+    llm = LLM(model=f"anthropic/{os.environ.get('GMPDI_CASE_MODEL', 'claude-haiku-5-5')}")  # Claude 5.5: no temperature
     historian = Agent(
         role="Case historian",
         goal="Find the closed deviations whose symptoms best match the current batch, and what CAPA worked.",
