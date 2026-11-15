@@ -212,3 +212,23 @@ def test_cost_stop_is_not_swallowed_by_langchain():
     assert CostMeter.raise_error is True
     assert config.price("models/gemini-3.5-flash-lite", 10) == config.price("gemini-3.5-flash-lite", 10)
     assert config.price("claude-sonnet-5-5-20261001", 10) == (2.00, 10.00)
+
+
+def test_analyst_transcript_drops_thinking_blocks():
+    from langchain_core.messages import AIMessage, ToolMessage
+
+    from agents.process_analyst import transcript
+
+    msgs = [
+        AIMessage(
+            content=[
+                {"type": "thinking", "thinking": "secret", "signature": "sig"},
+                {"type": "text", "text": "Checking the alarm."},
+            ],
+            tool_calls=[{"name": "get_alarm", "args": {"batch_id": 2}, "id": "1"}],
+        ),
+        ToolMessage(content='{"first_alarm_h": 41.0}', name="get_alarm", tool_call_id="1"),
+    ]
+    t = transcript(msgs)
+    assert "secret" not in t and "sig" not in t
+    assert "Checking the alarm." in t and "get_alarm" in t and "41.0" in t

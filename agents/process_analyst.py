@@ -138,10 +138,39 @@ async def llm_analyst(tb: Toolbox, batch_id: int, callbacks=None) -> ProcessFind
         },
         config=cfg,
     )
-    # Final structured answer in Anthropic's native JSON-schema mode: the default forced-tool-call route is not
-    # supported on the current Claude models.
+    # Final structured answer in Anthropic's native JSON-schema mode (the default forced-tool-call route is not
+    # supported on the current Claude models). It gets a plain-text transcript, not the raw messages: Claude's
+    # thinking blocks are bound to the call that made them (same system prompt and tools) and are rejected elsewhere.
     final = chat("analyst").with_structured_output(ProcessFindings, method="json_schema")
     return await final.ainvoke(
-        [*out["messages"], ("user", "Now return your findings as ProcessFindings, following the rules above.")],
+        [
+            ("system", ANALYST_PROMPT),
+            (
+                "user",
+                f"Your investigation of batch {batch_id} so far:\n\n{transcript(out['messages'])}\n\n"
+                "Return your findings as ProcessFindings, following the rules above.",
+            ),
+        ],
         config={"callbacks": callbacks or []},
     )
+
+
+def transcript(messages, max_tool_chars: int = 4000) -> str:
+    """Text-only view of a ReAct run: tool calls with their arguments, tool results, and the agent's written notes."""
+    lines = []
+    for m in messages:
+        kind = getattr(m, "type", "")
+        if kind == "ai":
+            text = (
+                m.content
+                if isinstance(m.content, str)
+                else " ".join(b.get("text", "") for b in m.content if isinstance(b, dict) and b.get("type") == "text")
+            )
+            if text.strip():
+                lines.append(f"ANALYST: {text.strip()}")
+            for tc in getattr(m, "tool_calls", []) or []:
+                lines.append(f"CALL {tc['name']}({tc['args']})")
+        elif kind == "tool":
+            content = m.content if isinstance(m.content, str) else str(m.content)
+            lines.append(f"RESULT {getattr(m, 'name', '')}: {content[:max_tool_chars]}")
+    return "\n".join(lines)
