@@ -30,6 +30,9 @@ Rules:
    say what would tell them apart in to_confirm.
 3. Draft Annex 22 ids (EU-GMP-Annex22-draft:...) are a draft guideline: never call them a requirement.
 4. Plain, short sentences. No speculation beyond the evidence; say what is unknown.
+5. Keep it tight: event at most 3 claims, evidence at most 6, at most 4 hypotheses with at most 3 supporting
+   claims each, product impact at most 2, CAPA at most 4, regulatory basis at most 3, similar cases at most 3.
+   One fact per claim; do not repeat a claim in several sections.
 """
 
 REVIEWER_PROMPT = """You review a draft GMP deviation investigation written by another AI model. You did not
@@ -66,7 +69,7 @@ async def write(pack: str, feedback: str | None, callbacks) -> Report:
     msgs = [("system", WRITER_PROMPT), ("user", f"Evidence pack:\n{pack}")]
     if feedback:
         msgs.append(("user", f"The reviewer sent your previous draft back. Fix this and redraft:\n{feedback}"))
-    llm = chat("writer", max_tokens=6000).with_structured_output(Report, method="json_schema")
+    llm = chat("writer", max_tokens=12000).with_structured_output(Report, method="json_schema")
     return await llm.ainvoke(msgs, config={"callbacks": callbacks})
 
 
